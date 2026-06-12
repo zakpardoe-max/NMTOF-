@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadForge — Verified Legal & Finance Prospecting</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232563eb'/%3E%3Cstop offset='1' stop-color='%230d9488'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='43' font-family='Inter,Arial,sans-serif' font-size='28' font-weight='800' fill='white' text-anchor='middle'%3ELF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef1f6; --bg2:#ffffff; --panel:#ffffff; --panel2:#f3f6fb; --border:#e1e7f0; --border2:#cbd5e4;
+    --text:#1c2536; --muted:#5d6a82; --dim:#93a0b5;
+    --accent:#2f6df0; --accent2:#2563eb; --grad:linear-gradient(135deg,#2563eb 0%,#0d9488 100%);
+    --green:#0e9f6e; --green-bg:#e2f6ed; --amber:#b07a14; --amber-bg:#fbf0d9; --red:#d64550; --red-bg:#fbe5e8;
+    --blue:#2563eb; --blue-bg:#e6eeff; --chip:#e9eef7;
+    --shadow:0 10px 30px rgba(23,38,77,.12);
+    --topbar:rgba(255,255,255,.88); --scroll:#c3cddd;
+    --map-land:#dbe4f0; --map-stroke:#ffffff;
+  }
+  body.dark{
+    --bg:#0a0e15; --bg2:#0d1320; --panel:#111927; --panel2:#172132; --border:#223047; --border2:#2d3e5a;
+    --text:#eaeef5; --muted:#8b97ad; --dim:#5b6781;
+    --green:#2fd08c; --green-bg:#0f3329; --amber:#e7b54a; --amber-bg:#382d14; --red:#ef6470; --red-bg:#3a1c23;
+    --blue:#5aa2ff; --blue-bg:#142944; --chip:#1e2a3f;
+    --shadow:0 10px 36px rgba(0,0,0,.45);
+    --topbar:rgba(13,19,32,.88); --scroll:#2b3145;
+    --map-land:#1d2940; --map-stroke:#0d1320;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{background:var(--bg); color:var(--text); font:13.5px/1.55 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; display:flex;}
+  a{color:var(--accent); text-decoration:none;} a:hover{text-decoration:underline;}
+  ::-webkit-scrollbar{width:10px;height:10px;} ::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:6px;} ::-webkit-scrollbar-track{background:transparent;}
+  body,.sidebar,.card,.topbar,input,select,textarea,.stat,.list-card,.bar-card,.check-item{transition:background .25s ease,border-color .25s ease,color .25s ease;}
+  .card:hover,.stat:hover{box-shadow:var(--shadow);}
+  .map-clocks{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .clock{background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:8px 14px;font-size:12px;}
+  .clock b{display:block;font-size:16px;font-variant-numeric:tabular-nums;}
+  .clock.night{background:var(--chip);} .clock .sun{font-size:13px;}
+  #mapWrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--panel2);}
+  #mapTip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:8px 12px;font-size:12px;box-shadow:var(--shadow);display:none;z-index:5;max-width:240px;}
+  .map-dot{cursor:pointer;}
+  .map-legend{display:flex;gap:16px;margin-top:10px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+  .map-legend span::before{content:"●";margin-right:5px;}
+  .lg-add::before{color:var(--green);} .lg-res::before{color:var(--amber);} .lg-other::before{color:var(--blue);}
+  .theme-toggle{margin-top:10px;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:9px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);}
+  .theme-toggle:hover{color:var(--text);}
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{width:232px; min-width:232px; height:100vh; position:sticky; top:0; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:18px 14px;}
+  .brand{display:flex; align-items:center; gap:10px; padding:4px 8px 18px;}
+  .brand .mark{width:34px;height:34px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;}
+  .brand .nm{font-size:17px;font-weight:800;letter-spacing:.2px;} .brand .nm span{color:var(--accent);}
+  .brand .tag{font-size:10px;color:var(--dim);display:block;margin-top:-2px;}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-top:6px;}
+  .nav button{display:flex;align-items:center;gap:11px;background:none;border:none;color:var(--muted);padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;text-align:left;}
+  .nav button .ic{width:20px;text-align:center;font-size:15px;}
+  .nav button:hover{color:var(--text);background:var(--panel);}
+  .nav button.active{color:#fff;background:var(--panel2);box-shadow:inset 3px 0 0 var(--accent);}
+  .nav button .cnt{margin-left:auto;background:var(--chip);border-radius:9px;padding:1px 8px;font-size:11px;color:var(--muted);}
+  .side-cta{margin-top:18px;background:var(--grad);border:none;color:#fff;font-weight:700;font-size:13.5px;padding:12px;border-radius:12px;cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(37,99,235,.35);}
+  .side-cta:hover{filter:brightness(1.1);}
+  .side-foot{margin-top:auto;padding:12px 8px 2px;font-size:11px;color:var(--dim);line-height:1.6;border-top:1px solid var(--border);}
+
+  /* ===== MAIN ===== */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{display:flex;align-items:center;gap:14px;padding:14px 26px;border-bottom:1px solid var(--border);background:var(--topbar);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;}
+  .topbar h1{font-size:16px;font-weight:700;}
+  .topbar .sub{font-size:11.5px;color:var(--muted);}
+  .top-search{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:7px 12px;width:300px;}
+  .top-search input{background:none;border:none;outline:none;color:var(--text);font:inherit;width:100%;}
+  .content{padding:22px 26px;max-width:1340px;width:100%;margin:0 auto;}
+  .page{display:none;} .page.active{display:block;animation:fade .18s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  h2{font-size:15px;font-weight:700;margin-bottom:12px;}
+  h3{font-size:13px;font-weight:700;margin-bottom:8px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .muted{color:var(--muted);font-size:12.5px;}
+  .dim{color:var(--dim);font-size:11.5px;}
+
+  input,select,textarea{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:8px 11px;font:inherit;font-size:13px;outline:none;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+  input::placeholder{color:var(--dim);}
+  button.btn{background:var(--accent2);border:none;color:#fff;padding:9px 16px;border-radius:9px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+  button.btn:hover{background:var(--accent);}
+  button.btn.grad{background:var(--grad);}
+  button.btn.ghost{background:var(--chip);color:var(--text);}
+  button.btn.ghost:hover{background:#2c3454;}
+  button.btn.danger{background:var(--red-bg);color:var(--red);}
+  button.btn.sm{padding:6px 11px;font-size:12px;}
+
+  /* ===== STAT CARDS ===== */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:18px;}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden;}
+  .stat::after{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--grad);opacity:.7;}
+  .stat .v{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+  .stat .l{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .stat.green::after{background:var(--green);} .stat.amber::after{background:var(--amber);} .stat.red::after{background:var(--red);} .stat.blue::after{background:var(--blue);}
+
+  /* ===== TABLE ===== */
+  .tablewrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;background:var(--panel);}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);text-align:left;padding:11px 12px;background:var(--panel2);cursor:pointer;white-space:nowrap;user-select:none;position:sticky;top:0;}
+  th:hover{color:var(--text);}
+  td{padding:11px 12px;border-top:1px solid var(--border);vertical-align:middle;}
+  tr.lead-row{cursor:pointer;} tr.lead-row:hover td{background:rgba(59,130,246,.06);}
+  .m-acct{background:var(--chip);color:var(--text);}
+  .pulse{animation:pulse 1.4s ease-in-out infinite;} @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+  .pname{display:flex;align-items:center;gap:10px;}
+  .avatar{width:32px;height:32px;min-width:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;}
+  .pname .em{font-size:11.5px;color:var(--muted);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:11px;font-size:11px;font-weight:600;white-space:nowrap;}
+  .b-new{background:var(--blue-bg);color:var(--blue);} .b-researching{background:var(--amber-bg);color:var(--amber);}
+  .b-verified{background:var(--green-bg);color:var(--green);} .b-contacted{background:var(--blue-bg);color:#8fc7ff;}
+  .b-rejected,.b-not-applicable{background:var(--red-bg);color:var(--red);}
+  .b-added{background:var(--green-bg);color:var(--green);border:1px solid rgba(47,208,140,.4);}
+  .b-stale{background:var(--amber-bg);color:var(--amber);}
+  button.st-btn{cursor:pointer;border:none;font-family:inherit;}
+  button.st-btn:hover{filter:brightness(1.3);}
+  .score{font-weight:800;} .s-hi{color:var(--green);} .s-mid{color:var(--amber);} .s-lo{color:var(--red);}
+  .firm-link{font-size:11px;margin-left:5px;}
+  .empty{padding:54px 20px;text-align:center;color:var(--muted);}
+  .empty .big{font-size:32px;display:block;margin-bottom:8px;}
+
+  /* ===== MENUS / DRAWER ===== */
+  .smenu{position:fixed;z-index:300;background:var(--panel2);border:1px solid var(--border2);border-radius:12px;padding:6px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;min-width:160px;}
+  .smenu button{border:none;border-radius:8px;padding:8px 14px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;}
+  .smenu .m-res{background:var(--amber-bg);color:var(--amber);} .smenu .m-add{background:var(--green-bg);color:var(--green);} .smenu .m-na{background:var(--red-bg);color:var(--red);}
+  .smenu button:hover{filter:brightness(1.3);}
+  .drawer{position:fixed;top:0;right:-600px;width:600px;max-width:96vw;height:100vh;background:var(--bg2);border-left:1px solid var(--border2);z-index:100;transition:right .25s ease;overflow-y:auto;padding:24px;}
+  .drawer.open{right:0;}
+  .overlay{position:fixed;inset:0;background:rgba(5,7,12,.6);z-index:90;display:none;}
+  .overlay.show{display:block;}
+  .check-item{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--panel);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;}
+  .check-item .nm{flex:1;font-weight:600;font-size:12.5px;}
+  .tri{display:flex;gap:4px;}
+  .tri button{width:30px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--chip);color:var(--muted);cursor:pointer;font-size:13px;}
+  .tri button.on-pass{background:var(--green-bg);color:var(--green);border-color:var(--green);}
+  .tri button.on-fail{background:var(--red-bg);color:var(--red);border-color:var(--red);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;} .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .field label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
+  .field input,.field select{width:100%;}
+  .pill-link{display:inline-block;background:var(--chip);border-radius:15px;padding:4px 12px;font-size:12px;margin:2px 3px 2px 0;}
+  .score-ring{font-size:32px;font-weight:800;}
+  .filter-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  textarea.code{width:100%;min-height:260px;font-family:ui-monospace,Menlo,monospace;font-size:12px;white-space:pre;}
+
+  /* ===== DASH BARS / LISTS ===== */
+  .hbar{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12.5px;}
+  .hbar .lbl{width:170px;min-width:170px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hbar .trk{flex:1;height:9px;background:var(--panel2);border-radius:6px;overflow:hidden;}
+  .hbar .fil{height:100%;background:var(--grad);border-radius:6px;}
+  .hbar .num{width:34px;text-align:right;font-weight:700;}
+  .grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:1000px){.grid-2col{grid-template-columns:1fr;}}
+  .list-card{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:15px 18px;margin-bottom:10px;}
+  .list-card .ic2{width:40px;height:40px;border-radius:11px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .list-card .info{flex:1;min-width:0;}
+  .list-card .info b{display:block;font-size:13.5px;}
+  .list-card.archived{opacity:.55;}
+  .bar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:10px;}
+  .bar-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:13px;}
+  .bar-card b{display:block;margin-bottom:4px;font-size:12.5px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--border2);color:var(--text);padding:11px 22px;border-radius:12px;z-index:400;display:none;font-size:13px;box-shadow:var(--shadow);}
+  .help{font-size:12px;color:var(--muted);margin-top:6px;}
+  .step{display:flex;gap:12px;margin-bottom:12px;}
+  .step .n{width:26px;height:26px;min-width:26px;border-radius:50%;background:var(--grad);color:#fff;font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="mark">LF</div>
+    <div><div class="nm">Lead<span>Forge</span></div><span class="tag">Legal & finance prospecting</span></div>
+  </div>
+  <nav class="nav">
+    <button data-page="dash" class="active"><span class="ic">📊</span> Dashboard</button>
+    <button data-page="leads"><span class="ic">🎯</span> Leads <span class="cnt" id="navLeadCnt"></span></button>
+    <button data-page="map"><span class="ic">🗺️</span> Firm map</button>
+    <button data-page="lists"><span class="ic">🗂️</span> Lists & filings <span class="cnt" id="navListCnt"></span></button>
+    <button data-page="request"><span class="ic">✨</span> Request leads</button>
+    <button data-page="directory"><span class="ic">⚖️</span> Bar directory</button>
+    <button data-page="data"><span class="ic">💾</span> Import / Export</button>
+  </nav>
+  <button class="side-cta" id="ctaRequest">✨ Request new leads</button>
+  <div class="theme-toggle" id="themeToggle"><span id="themeIcon">🌙</span> <span id="themeLabel">Dark mode</span></div>
+  <div class="side-foot">Research & verification by Claude · every lead source-checked against firm sites & state bars · press / to search</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div><h1 id="pageTitle">Dashboard</h1><div class="sub" id="pageSub"></div></div>
+    <div class="top-search">🔎 <input id="qSearch" placeholder="Search leads, firms, titles… (instant)"></div>
+    <button class="btn ghost sm" id="acctBtn">👤</button>
+  </header>
+
+  <div class="content">
+
+  <!-- ============ DASHBOARD ============ -->
+  <div class="page active" id="page-dash">
+    <div class="stats" id="dashStats"></div>
+    <div class="grid-2col">
+      <div class="card"><h2>Pipeline</h2><div id="dashPipe"></div></div>
+      <div class="card"><h2>By practice area</h2><div id="dashPractice"></div></div>
+    </div>
+    <div class="grid-2col">
+      <div class="card"><h2>Top states</h2><div id="dashStates"></div></div>
+      <div class="card">
+        <h2>Recent lists</h2><div id="dashLists"></div>
+        <button class="btn ghost sm" onclick="go('lists')">All lists →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ LEADS ============ -->
+  <div class="page" id="page-leads">
+    <div class="card" style="padding:14px 16px;">
+      <div class="row">
+        <select id="qList"><option value="">All lists</option></select>
+        <select id="qState"><option value="">All states</option></select>
+        <select id="qPractice"><option value="">All practice areas</option></select>
+        <select id="qStatus">
+          <option value="">All statuses</option><option>New</option><option>Researching</option>
+          <option>Added</option><option>Verified</option><option>Contacted</option>
+        </select>
+        <select id="qOwner"><option value="">Any owner</option></select>
+        <input id="qSizeMin" type="number" min="1" placeholder="Min attys" style="width:88px;">
+        <input id="qSizeMax" type="number" min="1" placeholder="Max attys" style="width:88px;">
+        <button class="btn ghost sm" id="btnAdvanced">+ Custom filters</button>
+        <button class="btn ghost sm" id="btnDead">💀 Dead leads</button>
+        <span style="flex:1"></span>
+        <button class="btn ghost sm" id="btnExportCsv">⬇ Export CSV</button>
+        <button class="btn sm grad" id="btnAddLead">+ Add lead</button>
+      </div>
+      <div id="advFilters" style="display:none;border-top:1px solid var(--border);padding-top:10px;margin-top:10px;">
+        <div id="filterRows"></div>
+        <div class="row">
+          <button class="btn ghost sm" id="btnAddFilterRow">+ Add condition</button>
+          <span class="muted">All conditions must match (AND) — build the logic the big tools won't let you.</span>
+          <span style="flex:1;"></span>
+          <input id="viewName" placeholder="Save view as…" style="width:150px;">
+          <button class="btn ghost sm" id="btnSaveView">Save view</button>
+          <select id="savedViews" style="min-width:130px;"><option value="">Saved views…</option></select>
+          <button class="btn danger sm" id="btnDeleteView">✕</button>
+        </div>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table id="leadTable">
+        <thead><tr>
+          <th data-sort="firm">Firm</th>
+          <th data-sort="state">Location</th><th data-sort="practiceArea">Practice area</th>
+          <th data-sort="firmSize">Size (attorneys)</th><th data-sort="owner">Owner</th>
+          <th data-sort="status">Status</th><th data-sort="lastVerified">Verified</th>
+        </tr></thead>
+        <tbody id="leadBody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ============ MAP ============ -->
+  <div class="page" id="page-map">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+        <h2 style="margin:0;">Where your firms are — live day & night</h2>
+        <div class="row" style="gap:6px;">
+          <button class="btn ghost sm" id="viewGlobe">🌍 Globe</button>
+          <button class="btn ghost sm" id="viewFlat">🗺️ Flat</button>
+        </div>
+      </div>
+      <p class="muted" style="margin-bottom:12px;">Satellite earth, live sunlight. Each glowing marker is a firm (sized by contacts there) — green pulse means added to outreach. Drag to spin, scroll to zoom, hover for details, click to open those leads. The dark side is night right now — check the clocks before you call.</p>
+      <div class="map-clocks" id="mapClocks"></div>
+      <div id="globeWrap" style="height:560px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000208;display:none;"></div>
+      <div id="mapWrap"><div id="mapTip"></div><svg id="mapSvg" viewBox="0 0 975 610" style="width:100%;height:auto;display:block;"></svg></div>
+      <div class="map-legend">
+        <span class="lg-add">Added to outreach</span><span class="lg-res">Researching / new</span><span class="lg-other">Verified / contacted</span>
+        <span style="margin-left:auto;" id="mapMeta"></span>
+      </div>
+      <p class="help" id="mapUnplotted"></p>
+    </div>
+  </div>
+
+  <!-- ============ LISTS ============ -->
+  <div class="page" id="page-lists">
+    <div class="card" style="padding:14px 16px;">
+      <div class="row">
+        <input id="newListName" placeholder="New list name (e.g. Week of Jun 15 — TX Family)" style="min-width:300px;">
+        <button class="btn sm" id="btnNewList">Create list</button>
+        <span style="flex:1"></span>
+        <label class="muted" style="cursor:pointer;"><input type="checkbox" id="showArchived" style="width:auto;margin-right:6px;">Show archived</label>
+      </div>
+    </div>
+    <div id="listCards"></div>
+  </div>
+
+  <!-- ============ REQUEST ============ -->
+  <div class="page" id="page-request">
+    <div class="card">
+      <h2>Request a researched lead list</h2>
+      <p class="muted" style="margin-bottom:16px;">Your existing database is searchable instantly above. <b>New</b> leads need real research — firm sites, state bars, email patterns — which Claude runs for you. Two ways to get it:</p>
+      <div class="step"><div class="n">1</div><div><b>On-demand:</b> set criteria below, copy the brief into Cowork chat (or just describe what you want). Claude returns an updated site build with the new list pre-loaded — drop it in and it appears under Lists.</div></div>
+      <div class="step"><div class="n">2</div><div><b>Scheduled:</b> ask Claude to run this weekly ("every Monday, 20 new IP firms in the Southeast"). A fresh, dated list lands without you lifting a finger — that's the Lusha feel, minus the stale data.</div></div>
+      <div class="grid3" style="margin-top:14px;">
+        <div class="field"><label>States / regions</label><input id="pGeo" placeholder="e.g. TX, NY, Southeast US"></div>
+        <div class="field"><label>Practice area(s)</label><input id="pPractice" placeholder="e.g. M&A, Immigration, IP"></div>
+        <div class="field"><label>Target roles</label><input id="pRoles" value="Managing Partner, Practice Group Lead, CFO/COO"></div>
+        <div class="field"><label>Min attorneys</label><input id="pSizeMin" type="number" min="1" placeholder="e.g. 6"></div>
+        <div class="field"><label>Max attorneys</label><input id="pSizeMax" type="number" min="1" placeholder="e.g. 50"></div>
+        <div class="field"><label>Number of firms</label><input id="pCount" type="number" value="20" min="1" max="100"></div>
+        <div class="field" style="grid-column:1/-1;"><label>Extra requirements</label><input id="pExtra" placeholder="e.g. firms founded after 2000, no AmLaw 100, must have published emails"></div>
+      </div>
+      <div class="row" style="margin-top:14px;">
+        <button class="btn grad" id="btnRunClaude">✨ Generate leads with Claude</button>
+        <button class="btn ghost" id="btnGenPrompt">Brief only (manual)</button>
+        <button class="btn ghost" id="btnCopyPrompt" style="display:none;">📋 Copy</button>
+        <span class="muted pulse" id="genStatus"></span>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <input id="apiKey" type="password" placeholder="Anthropic API key (sk-ant-…)" style="min-width:320px;">
+        <button class="btn ghost sm" id="btnSaveKey">Save key</button>
+        <span class="dim">Stored only in your browser. Powers in-page generation — get a key at console.anthropic.com. Each run costs a few dollars of API usage and takes 2–4 min.</span>
+      </div>
+      <textarea class="code" id="promptOut" style="display:none;margin-top:12px;" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- ============ DIRECTORY ============ -->
+  <div class="page" id="page-directory">
+    <div class="card">
+      <h2>State bar attorney lookups — all 50 states + DC</h2>
+      <p class="muted" style="margin-bottom:12px;">✓ = link verified June 2026. Unverified states open a search scoped to the bar's own domain, which can't 404 or land on the wrong page.</p>
+      <div class="row" style="margin-bottom:14px;">
+        <input id="dirName" placeholder="Attorney name (pre-fills supported searches)" style="min-width:300px;">
+        <input id="dirFilter" placeholder="Filter states…" style="width:160px;">
+      </div>
+      <div class="bar-grid" id="barGrid"></div>
+    </div>
+    <div class="card"><h2>National verification sources</h2><div id="natSources"></div></div>
+  </div>
+
+  <!-- ============ DATA ============ -->
+  <div class="page" id="page-data">
+    <div class="card">
+      <h2>Import leads (CSV)</h2>
+      <p class="muted" style="margin-bottom:10px;">Accepts LeadForge format, Claude research output, or Lusha/ZoomInfo exports (columns auto-mapped). Each import becomes its own dated list. Same-firm contacts auto-merge into backups.</p>
+      <input type="file" id="csvFile" accept=".csv">
+      <div class="help" id="importResult"></div>
+    </div>
+    <div class="card">
+      <h2>Backup & restore</h2>
+      <div class="row">
+        <button class="btn ghost" id="btnExportJson">Backup everything (JSON)</button>
+        <label class="btn ghost" style="cursor:pointer;">Restore JSON backup<input type="file" id="jsonFile" accept=".json" style="display:none;"></label>
+      </div>
+      <p class="help">Statuses and edits live in each person's browser. Share a JSON backup to sync a teammate to your exact state.</p>
+    </div>
+    <div class="card">
+      <h2>How verification works</h2>
+      <p class="muted">Every lead carries a checklist (firm bio, state bar, LinkedIn, directories, news) with one-click source lookups inside the lead. Leads not re-verified for 60+ days get a "Stale" badge so old data can't masquerade as fresh — the core problem with the big databases. Set a follow-up date on a lead and it shows a ⏰ Due badge when the day arrives.</p>
+    </div>
+    <div class="card">
+      <h2>Danger zone</h2>
+      <button class="btn danger" id="btnWipe">Delete all leads & lists</button>
+    </div>
+  </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2"></script>
+<script>
+"use strict";
+/* ================= STATE BAR DIRECTORY (East-Coast links verified Jun 2026) ================= */
+const STATE_BARS = {
+  AL:{name:"Alabama State Bar — Member Search", url:"https://www.alabar.org/for-the-public/find-a-member/"},
+  AK:{name:"Alaska Bar Association — Member Directory", url:"https://alaskabar.org/for-our-members/member-directory/"},
+  AZ:{name:"State Bar of Arizona — Find a Lawyer", url:"https://azbar.org/for-the-public/find-a-lawyer/"},
+  AR:{name:"Arkansas Judiciary — Attorney Search", url:"https://attorneyinfo.aoc.arkansas.gov/info/attorney_search/info_attorney_search.aspx"},
+  CA:{name:"State Bar of California — Licensee Search", url:"https://apps.calbar.ca.gov/attorney/LicenseeSearch/QuickSearch?FreeText={q}", q:true, v:1},
+  CO:{name:"Colorado Supreme Court — Attorney Search", url:"https://www.coloradosupremecourt.com/Search/AttSearch.asp"},
+  CT:{name:"Connecticut Judicial Branch — Attorney/Firm Look-up", url:"https://www.jud.ct.gov/attorneyfirminquiry/", v:1},
+  DE:{name:"Delaware Courts — Attorney Directory", url:"https://courts.delaware.gov/forms/download.aspx?id=39288"},
+  DC:{name:"D.C. Bar — Member Directory", url:"https://my.dcbar.org/memberdirectory", v:1},
+  FL:{name:"The Florida Bar — Find a Lawyer", url:"https://www.floridabar.org/directories/find-mbr/", v:1},
+  GA:{name:"State Bar of Georgia — Member Directory", url:"https://www.gabar.org/member-directory", v:1},
+  HI:{name:"Hawaii State Bar — Member Directory", url:"https://hsba.org/HSBA/Directory.aspx"},
+  ID:{name:"Idaho State Bar — Attorney Roster", url:"https://isb.idaho.gov/licensing-mcle/attorney-roster-search/"},
+  IL:{name:"Illinois ARDC — Lawyer Search", url:"https://www.iardc.org/Lawyer-Search"},
+  IN:{name:"Indiana Roll of Attorneys", url:"https://courtapps.in.gov/rollofattorneys/Search"},
+  IA:{name:"Iowa Courts — Attorney Search", url:"https://www.iacourtcommissions.org/SearchAttorney.do"},
+  KS:{name:"Kansas Courts — Attorney Directory", url:"https://www.kscourts.org/Attorneys/Attorney-Directory"},
+  KY:{name:"Kentucky Bar — Lawyer Locator", url:"https://www.kybar.org/search/custom.asp?id=2947"},
+  LA:{name:"Louisiana State Bar — Find a Lawyer", url:"https://www.lsba.org/Public/FindLawyer.aspx"},
+  ME:{name:"Maine Board of Overseers — Attorney Search", url:"https://www.mebaroverseers.org/attorney_services/attorney_search.html"},
+  MD:{name:"Maryland Courts — Attorney Search", url:"https://www.mdcourts.gov/attysearch", v:1},
+  MA:{name:"Massachusetts BBO — Look Up an Attorney", url:"https://www.massbbo.org/s/", v:1},
+  MI:{name:"State Bar of Michigan — Member Directory", url:"https://sbm.reliaguide.com/lawyer"},
+  MN:{name:"Minnesota Courts — Attorney Registration Search", url:"https://mars.courts.state.mn.us/Pages/AttorneySearch.aspx"},
+  MS:{name:"Mississippi Bar — Lawyer Directory", url:"https://www.msbar.org/lawyer-directory/"},
+  MO:{name:"Missouri Bar — Lawyer Directory", url:"https://mobar.org/site/content/For-the-Public/Lawyer_Directory.aspx"},
+  MT:{name:"State Bar of Montana — Member Search", url:"https://www.montanabar.org/Public/Hire-a-Montana-Lawyer"},
+  NE:{name:"Nebraska State Bar — Find a Lawyer", url:"https://www.nebar.com/search/custom.asp?id=567"},
+  NV:{name:"State Bar of Nevada — Find a Lawyer", url:"https://nvbar.org/for-the-public/find-a-lawyer/"},
+  NH:{name:"New Hampshire — Attorney Discipline / Lookup", url:"https://www.courts.nh.gov/attorneys/nh-attorney-discipline-system"},
+  NJ:{name:"NJ Courts — Attorneys (Attorney Search portal)", url:"https://www.njcourts.gov/attorneys", v:1},
+  NM:{name:"State Bar of New Mexico — Find an Attorney", url:"https://www.sbnm.org/For-Public/I-Need-a-Lawyer"},
+  NY:{name:"NY Unified Court System — Attorney Online Services Search", url:"https://iapps.courts.state.ny.us/attorneyservices/search", v:1},
+  NC:{name:"North Carolina State Bar — Member Search", url:"https://portal.ncbar.gov/Verification/search.aspx"},
+  ND:{name:"State Bar of North Dakota — Lawyer Directory", url:"https://www.sband.org/page/FindALawyer"},
+  OH:{name:"Supreme Court of Ohio — Attorney Search", url:"https://www.supremecourt.ohio.gov/AttorneySearch/#/search"},
+  OK:{name:"Oklahoma Bar — Find a Lawyer", url:"https://www.okbar.org/findalawyer/"},
+  OR:{name:"Oregon State Bar — Member Search", url:"https://www.osbar.org/members/membersearch_start.asp"},
+  PA:{name:"PA Disciplinary Board — Look Up an Attorney", url:"https://www.padisciplinaryboard.org/for-the-public/find-attorney", v:1},
+  RI:{name:"Rhode Island Judiciary — Attorney Resources", url:"https://www.courts.ri.gov/AttorneyResources/Pages/default.aspx"},
+  SC:{name:"South Carolina Bar — Member Directory", url:"https://www.scbar.org/public/courts-lawyers/member-search/"},
+  SD:{name:"State Bar of South Dakota — Lawyer Search", url:"https://www.statebarofsouthdakota.com/p/cm/ld/fid=58"},
+  TN:{name:"Tennessee BPR — Attorney Directory", url:"https://www.tbpr.org/for-the-public/online-attorney-directory"},
+  TX:{name:"State Bar of Texas — Find a Lawyer", url:"https://www.texasbar.com/AM/Template.cfm?Section=Find_A_Lawyer"},
+  UT:{name:"Utah State Bar — Member Directory", url:"https://services.utahbar.org/Member-Directory"},
+  VT:{name:"Vermont Judiciary — Attorney Licensing", url:"https://www.vermontjudiciary.org/attorneys/attorney-licensing"},
+  VA:{name:"Virginia State Bar — Lawyer Directory", url:"https://vsb.org/Site/Shared_Content/Directory/va-lawyer-directory.aspx", v:1},
+  WA:{name:"Washington State Bar — Legal Directory", url:"https://www.mywsba.org/PersonifyEbusiness/LegalDirectory.aspx"},
+  WV:{name:"West Virginia State Bar — Membership Search", url:"https://wvbar.org/public-information/membership-information/"},
+  WI:{name:"State Bar of Wisconsin — Lawyer Directory", url:"https://www.wisbar.org/directories/Pages/default.aspx"},
+  WY:{name:"Wyoming State Bar — Lawyer Directory", url:"https://www.wyomingbar.org/directory/"}
+};
+function barHost(url){ try{ return new URL(url.replace("{q}","x")).hostname; }catch(e){ return ""; } }
+const STATE_NAMES = {AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
+const NATIONAL_SOURCES = [
+  {name:"Best Lawyers", url:"https://www.bestlawyers.com/search", note:"Peer-reviewed rankings; good title/practice confirmation."},
+  {name:"Martindale-Hubbell", url:"https://www.martindale.com/", note:"Long-running attorney directory with peer ratings."},
+  {name:"Avvo", url:"https://www.avvo.com/find-a-lawyer", note:"Profiles + license info aggregated from state bars."},
+  {name:"Chambers and Partners", url:"https://chambers.com/", note:"Ranked lawyers/firms — strong for practice-lead identification."},
+  {name:"FINRA BrokerCheck", url:"https://brokercheck.finra.org/", note:"Finance-side contacts: registration & history."},
+  {name:"SEC IAPD (Adviser Search)", url:"https://adviserinfo.sec.gov/", note:"Investment adviser firms & reps."},
+  {name:"Law360 Pulse", url:"https://www.law360.com/", note:"Lateral moves & promotions — catches stale data."}
+];
+
+/* ================= STORAGE, ACCOUNTS & MIGRATION ================= */
+let MEM = {leads:[], views:{}, lists:[]};
+const ACCTS_KEY="leadforge_accounts", CUR_KEY="leadforge_current";
+function accounts(){ try{ const a=JSON.parse(localStorage.getItem(ACCTS_KEY)); return Array.isArray(a)&&a.length?a:["Default"]; }catch(e){ return ["Default"]; } }
+function currentAccount(){ const c=localStorage.getItem(CUR_KEY); return accounts().includes(c)?c:"Default"; }
+function storeKey(){ const a=currentAccount(); return a==="Default" ? "leadforge" : "leadforge::"+a; }
+function store(){ try{ localStorage.setItem(storeKey(), JSON.stringify(MEM)); }catch(e){} }
+function load(){
+  MEM = {leads:[], views:{}, lists:[]};
+  try{ const d = localStorage.getItem(storeKey()); if(d) MEM = Object.assign({leads:[],views:{},lists:[]}, JSON.parse(d)); }catch(e){}
+  if(!Array.isArray(MEM.lists)) MEM.lists = [];
+  // migrate: any lead without a list goes into a legacy list
+  const orphans = MEM.leads.filter(l=>!l.listId);
+  if(orphans.length){
+    let lg = MEM.lists.find(x=>x.id==="legacy");
+    if(!lg){ lg = {id:"legacy", name:"Earlier leads", created:today(), archived:false}; MEM.lists.push(lg); }
+    orphans.forEach(l=>l.listId="legacy");
+  }
+}
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none",2800); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function daysSince(d){ if(!d) return Infinity; return Math.floor((Date.now()-new Date(d).getTime())/86400000); }
+function listName(id){ const l = MEM.lists.find(x=>x.id===id); return l?l.name:""; }
+load();
+
+/* ================= VERIFICATION CHECKS ================= */
+const CHECKS = [
+  {key:"firmBio",   label:"Firm website bio confirms role"},
+  {key:"stateBar",  label:"State bar record — active, name matches"},
+  {key:"linkedin",  label:"LinkedIn profile matches title & firm"},
+  {key:"directory", label:"Best Lawyers / Martindale / Chambers listing"},
+  {key:"news",      label:"Recent news / press mention (last 12 mo)"}
+];
+function isStale(l){ return l.lastVerified && daysSince(l.lastVerified) > 60; }
+function followUpDue(l){ return l.followUp && l.followUp <= today() && !isDead(l); }
+function isDead(l){ return l.status==="Not Applicable" || l.status==="Rejected"; }
+
+/* ================= VERIFICATION LINKS ================= */
+function gsearch(q){ return "https://www.google.com/search?q="+encodeURIComponent(q); }
+function leadLinks(l){
+  const full = (l.firstName+" "+l.lastName).trim();
+  const links = [];
+  if(l.website) links.push({label:"🌐 Firm website", url:(l.website.match(/^https?:/)?l.website:"https://"+l.website)});
+  links.push({label:"Firm bio", url:gsearch('"'+full+'" "'+(l.firm||"")+'"')});
+  const bar = STATE_BARS[l.state];
+  if(bar){
+    const direct = bar.q ? bar.url.replace("{q}", encodeURIComponent(full)) : bar.url;
+    const site = gsearch("site:"+barHost(bar.url)+" "+full);
+    links.push({label:STATE_NAMES[l.state]+" bar"+(bar.v?" ✓":""), url: bar.v ? direct : site});
+    if(!bar.v) links.push({label:l.state+" bar (direct)", url:direct});
+  } else if(l.state){
+    links.push({label:l.state+" bar (search)", url:gsearch(l.state+" state bar attorney search "+full)});
+  }
+  links.push({label:"Best Lawyers", url:"https://www.bestlawyers.com/search?searchType=lawyer&query="+encodeURIComponent(full)});
+  links.push({label:"LinkedIn", url:"https://www.linkedin.com/search/results/people/?keywords="+encodeURIComponent(full+" "+(l.firm||""))});
+  links.push({label:"News", url:"https://news.google.com/search?q="+encodeURIComponent('"'+full+'" '+(l.firm||""))});
+  links.push({label:"Martindale", url:gsearch('site:martindale.com "'+full+'"')});
+  return links;
+}
+
+/* ================= NAV ================= */
+const PAGE_META = {
+  dash:["Dashboard","Your prospecting at a glance"],
+  leads:["Leads","One decision maker per firm — backups inside each lead"],
+  map:["Firm map","Live day & night across your territory"],
+  lists:["Lists & filings","Dated batches: weekly runs, imports, archives"],
+  request:["Request leads","Claude researches, verifies and loads new lists"],
+  directory:["Bar directory","Official attorney lookups, all 50 states + DC"],
+  data:["Import / Export","Move data in and out, backups, scoring rules"]
+};
+function go(page){
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active", b.dataset.page===page));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  $("page-"+page).classList.add("active");
+  $("pageTitle").textContent = PAGE_META[page][0];
+  $("pageSub").textContent = PAGE_META[page][1];
+  if(page==="dash") renderDash();
+  if(page==="lists") renderLists();
+  if(page==="map") renderMap();
+}
+document.querySelectorAll(".nav button").forEach(b=>{ b.onclick = ()=>go(b.dataset.page); });
+$("ctaRequest").onclick = ()=>go("request");
+
+/* ================= ACCOUNT SWITCHER ================= */
+function renderAcct(){ $("acctBtn").textContent = "👤 "+currentAccount()+" ▾"; }
+function switchAccount(a){
+  const reg = accounts();
+  if(!reg.includes(a)){ reg.push(a); localStorage.setItem(ACCTS_KEY, JSON.stringify(reg)); }
+  localStorage.setItem(CUR_KEY, a);
+  load(); mergeSeedsRun();
+  renderViews(); renderLeads(); renderDash(); renderLists(); renderAcct();
+  toast("Switched to "+a);
+}
+$("acctBtn").onclick = (e)=>{
+  e.stopPropagation();
+  document.querySelectorAll(".smenu").forEach(m=>m.remove());
+  const m = document.createElement("div"); m.className="smenu";
+  accounts().forEach(a=>{
+    const b = document.createElement("button"); b.className="m-acct";
+    b.textContent = (a===currentAccount()?"✓ ":"") + a;
+    b.onclick = (ev)=>{ ev.stopPropagation(); switchAccount(a); m.remove(); };
+    m.appendChild(b);
+  });
+  const add = document.createElement("button"); add.className="m-add"; add.textContent="+ Add account";
+  add.onclick = (ev)=>{
+    ev.stopPropagation(); m.remove();
+    const n = (prompt("Account name (e.g. your colleague's name):")||"").trim();
+    if(!n) return;
+    const a = accounts(); if(!a.includes(n)){ a.push(n); localStorage.setItem(ACCTS_KEY, JSON.stringify(a)); }
+    switchAccount(n);
+  };
+  m.appendChild(add);
+  document.body.appendChild(m);
+  m.style.right = "20px"; m.style.left = "auto"; m.style.top = "58px";
+  setTimeout(()=>document.addEventListener("click", function close(){ m.remove(); document.removeEventListener("click", close); }), 0);
+};
+
+/* ================= ONE DECISION MAKER PER FIRM ================= */
+function firmKey(f){ return (f||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function titleRank(t){
+  t = (t||"").toLowerCase();
+  if(t.includes("managing partner")||t.includes("managing attorney")||t.includes("co-managing")) return 100;
+  if(t.includes("owner")) return 95;
+  if(t.includes("president")||t.includes("ceo")||t.includes("chief executive")) return 90;
+  if(t.includes("chairman")||t.includes("chair of")) return 85;
+  if(t.includes("founder")||t.includes("founding")) return 80;
+  if(t.includes("principal")) return 70;
+  if(t.includes("cfo")||t.includes("coo")||t.includes("chief")) return 65;
+  if(t.includes("partner-in-charge")||t.includes("in charge")) return 60;
+  if(t.includes("co-chair")||t.includes("head of")||t.includes("practice group lead")) return 50;
+  if(t.includes("partner")) return 40;
+  if(t.includes("counsel")) return 20;
+  return 10;
+}
+function toAlt(l){ return {firstName:l.firstName, lastName:l.lastName, title:l.title, email:l.email, phone:l.phone, notes:l.notes}; }
+function dedupeByFirm(){
+  const groups = {};
+  MEM.leads.forEach(l=>{ if(isDead(l) || !l.firm) return; const k=firmKey(l.firm); (groups[k]=groups[k]||[]).push(l); });
+  let merged = 0;
+  Object.values(groups).forEach(g=>{
+    if(g.length < 2) return;
+    g.sort((a,b)=> (titleRank(b.title)-titleRank(a.title)) || ((b.email?1:0)-(a.email?1:0)));
+    const p = g[0]; p.altContacts = p.altContacts||[];
+    g.slice(1).forEach(d=>{
+      p.altContacts.push(toAlt(d));
+      (d.altContacts||[]).forEach(a=>p.altContacts.push(a));
+      MEM.leads = MEM.leads.filter(x=>x.id!==d.id);
+      merged++;
+    });
+  });
+  if(merged) store();
+  return merged;
+}
+function promoteAlt(leadId, idx){
+  const l = MEM.leads.find(x=>x.id===leadId); if(!l || !l.altContacts || !l.altContacts[idx]) return;
+  const a = l.altContacts.splice(idx,1)[0];
+  l.altContacts.unshift(toAlt(l));
+  Object.assign(l, {firstName:a.firstName||"", lastName:a.lastName||"", title:a.title||"", email:a.email||"", phone:a.phone||"", notes:a.notes||""});
+  store(); openDrawer(l.id); renderLeads(); toast(a.firstName+" "+a.lastName+" is now the primary contact");
+}
+function removeAlt(leadId, idx){
+  const l = MEM.leads.find(x=>x.id===leadId); if(!l || !l.altContacts) return;
+  l.altContacts.splice(idx,1); store(); openDrawer(l.id); renderLeads();
+}
+
+/* ================= CUSTOM FILTERS ================= */
+const FILTER_FIELDS = [
+  {key:"name",label:"Name",type:"text"},{key:"title",label:"Title",type:"text"},{key:"firm",label:"Firm",type:"text"},
+  {key:"city",label:"City",type:"text"},{key:"state",label:"State",type:"text"},{key:"practiceArea",label:"Practice area",type:"text"},
+  {key:"firmSize",label:"Firm size (attorneys)",type:"num"},{key:"owner",label:"Owner",type:"text"},
+  {key:"tenureYears",label:"Years in role",type:"num"},{key:"daysSinceVerified",label:"Days since verified",type:"num"},
+  {key:"checksPassed",label:"# checks passed",type:"num"},{key:"altCount",label:"# backup contacts",type:"num"},
+  {key:"email",label:"Email",type:"text"},{key:"status",label:"Status",type:"text"},{key:"notes",label:"Notes",type:"text"}
+];
+const OPS = {
+  text:[{v:"contains",l:"contains"},{v:"not_contains",l:"doesn't contain"},{v:"is",l:"is exactly"},{v:"empty",l:"is empty"},{v:"not_empty",l:"is not empty"}],
+  num:[{v:"gte",l:"≥"},{v:"lte",l:"≤"},{v:"eq",l:"="},{v:"empty",l:"is empty"},{v:"not_empty",l:"is not empty"}]
+};
+let advRows = [];
+function fieldValue(l, key){
+  if(key==="name") return (l.firstName+" "+l.lastName).trim();
+  if(key==="daysSinceVerified"){ const d=daysSince(l.lastVerified); return d===Infinity?null:d; }
+  if(key==="checksPassed") return CHECKS.filter(c=>l.checks&&l.checks[c.key]==="pass").length;
+  if(key==="altCount") return (l.altContacts||[]).length;
+  return l[key];
+}
+function rowMatches(l, r){
+  const v = fieldValue(l, r.field);
+  const ft = (FILTER_FIELDS.find(f=>f.key===r.field)||{}).type;
+  if(r.op==="empty") return v==null || v==="";
+  if(r.op==="not_empty") return !(v==null || v==="");
+  if(ft==="num"){
+    const n = parseFloat(v), t = parseFloat(r.val);
+    if(isNaN(n)||isNaN(t)) return false;
+    if(r.op==="gte") return n>=t; if(r.op==="lte") return n<=t; if(r.op==="eq") return n===t;
+  } else {
+    const s = String(v==null?"":v).toLowerCase(), t = String(r.val||"").toLowerCase();
+    if(r.op==="contains") return s.includes(t);
+    if(r.op==="not_contains") return !s.includes(t);
+    if(r.op==="is") return s===t;
+  }
+  return false;
+}
+function renderFilterRows(){
+  $("filterRows").innerHTML = "";
+  advRows.forEach((r,i)=>{
+    const div = document.createElement("div"); div.className="filter-row";
+    const fsel = document.createElement("select");
+    FILTER_FIELDS.forEach(f=>{ const o=document.createElement("option"); o.value=f.key; o.textContent=f.label; if(f.key===r.field)o.selected=true; fsel.appendChild(o); });
+    const ft = (FILTER_FIELDS.find(f=>f.key===r.field)||{}).type;
+    const osel = document.createElement("select");
+    OPS[ft].forEach(op=>{ const o=document.createElement("option"); o.value=op.v; o.textContent=op.l; if(op.v===r.op)o.selected=true; osel.appendChild(o); });
+    const inp = document.createElement("input"); inp.value=r.val||""; inp.placeholder="value";
+    inp.style.display = (r.op==="empty"||r.op==="not_empty") ? "none":"";
+    const del = document.createElement("button"); del.className="btn danger sm"; del.textContent="✕";
+    fsel.onchange = ()=>{ r.field=fsel.value; const nt=(FILTER_FIELDS.find(f=>f.key===r.field)||{}).type; r.op=OPS[nt][0].v; renderFilterRows(); renderLeads(); };
+    osel.onchange = ()=>{ r.op=osel.value; renderFilterRows(); renderLeads(); };
+    inp.oninput = ()=>{ r.val=inp.value; renderLeads(); };
+    del.onclick = ()=>{ advRows.splice(i,1); renderFilterRows(); renderLeads(); };
+    div.append(fsel,osel,inp,del); $("filterRows").appendChild(div);
+  });
+}
+$("btnAddFilterRow").onclick = ()=>{ advRows.push({field:"firmSize",op:"gte",val:""}); renderFilterRows(); };
+$("btnAdvanced").onclick = ()=>{ const a=$("advFilters"); a.style.display = a.style.display==="none"?"block":"none"; };
+$("btnSaveView").onclick = ()=>{
+  const n = $("viewName").value.trim(); if(!n) return toast("Name the view first");
+  MEM.views[n] = JSON.parse(JSON.stringify(advRows)); store(); renderViews(); $("viewName").value=""; toast("View saved");
+};
+$("btnDeleteView").onclick = ()=>{ const n=$("savedViews").value; if(!n) return; delete MEM.views[n]; store(); renderViews(); toast("View deleted"); };
+function renderViews(){
+  const s = $("savedViews"); s.innerHTML = '<option value="">Saved views…</option>';
+  Object.keys(MEM.views).forEach(n=>{ const o=document.createElement("option"); o.value=n; o.textContent=n; s.appendChild(o); });
+}
+$("savedViews").onchange = ()=>{
+  const n=$("savedViews").value; if(!n) return;
+  advRows = JSON.parse(JSON.stringify(MEM.views[n])); $("advFilters").style.display="block";
+  renderFilterRows(); renderLeads();
+};
+
+/* ================= LEAD TABLE ================= */
+let sortKey = "firm", sortDir = 1, deadView = false;
+document.querySelectorAll("th[data-sort]").forEach(th=>{
+  th.onclick = ()=>{ const k=th.dataset.sort; if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=-1;} renderLeads(); };
+});
+function filteredLeads(){
+  const q = $("qSearch").value.toLowerCase(), st=$("qState").value, pa=$("qPractice").value,
+        stat=$("qStatus").value, ow=$("qOwner").value, li=$("qList").value;
+  return MEM.leads.filter(l=>{
+    if(deadView !== isDead(l)) return false;
+    if(li && l.listId!==li) return false;
+    if(q){
+      const hay = [l.firstName, l.lastName, l.firm, l.title, l.practiceArea, l.city, l.state,
+        STATE_NAMES[l.state]||"", l.email, l.phone, l.owner, l.notes, l.website, listName(l.listId)]
+        .concat((l.altContacts||[]).map(a=>(a.firstName||"")+" "+(a.lastName||"")+" "+(a.title||"")+" "+(a.email||"")))
+        .join(" ").toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    if(st && l.state!==st) return false;
+    if(pa && l.practiceArea!==pa) return false;
+    if(stat && l.status!==stat) return false;
+    if(ow && (l.owner||"")!==ow) return false;
+    const szMin = parseFloat($("qSizeMin").value), szMax = parseFloat($("qSizeMax").value);
+    if(!isNaN(szMin) || !isNaN(szMax)){
+      const sz = parseFloat(l.firmSize);
+      if(isNaN(sz)) return false;
+      if(!isNaN(szMin) && sz < szMin) return false;
+      if(!isNaN(szMax) && sz > szMax) return false;
+    }
+    if($("advFilters").style.display!=="none") for(const r of advRows){ if(!rowMatches(l,r)) return false; }
+    return true;
+  });
+}
+function initials(l){ return ((l.firstName||" ")[0]+(l.lastName||" ")[0]).toUpperCase(); }
+function renderLeads(){
+  const rows = filteredLeads().slice().sort((a,b)=>{
+    let va = sortKey==="name"?(a.firstName+a.lastName):a[sortKey];
+    let vb = sortKey==="name"?(b.firstName+b.lastName):b[sortKey];
+    va = va==null?"":va; vb = vb==null?"":vb;
+    if(sortKey==="firmSize"){ va=parseFloat(va)||0; vb=parseFloat(vb)||0; }
+    if(typeof va==="number"&&typeof vb==="number") return (va-vb)*sortDir;
+    return String(va).localeCompare(String(vb))*sortDir;
+  });
+  const tb = $("leadBody"); tb.innerHTML="";
+  rows.forEach(l=>{
+    const slug = (l.status||"New").toLowerCase().replace(/\s+/g,"-");
+    const webUrl = l.website ? (l.website.match(/^https?:/)?l.website:"https://"+l.website) : "";
+    const tr = document.createElement("tr"); tr.className="lead-row";
+    tr.innerHTML =
+      '<td><div class="pname"><div class="avatar">'+esc((l.firm||"?").slice(0,2).toUpperCase())+'</div><div><b>'+esc(l.firm||"—")+"</b>"+
+      (webUrl?' <a class="firm-link" href="'+esc(webUrl)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open firm website">🌐</a>':"")+
+      ((l.altContacts||[]).length?' <span class="badge b-new" title="'+(l.altContacts.length)+' backup contact(s)">+'+l.altContacts.length+'</span>':"")+
+      '<div class="em'+(l.email?'':' dim')+'">'+esc(l.firstName+" "+l.lastName)+(l.email?" · ✉":" · no email")+"</div></div></div></td>"+
+      "<td>"+esc((l.city?l.city+", ":"")+(l.state||""))+"</td>"+
+      "<td>"+esc(l.practiceArea||"—")+"</td><td>"+esc(l.firmSize||"—")+"</td>"+
+      "<td>"+(l.owner?'<span class="badge b-new">'+esc(l.owner)+"</span>":'<span class="dim">—</span>')+"</td>"+
+      '<td><button class="badge st-btn b-'+slug+'" title="Click to set status">'+esc(l.status||"New")+" ▾</button>"+
+      (followUpDue(l)?' <span class="badge b-amber" style="background:var(--amber-bg);color:var(--amber);">⏰ Due</span>':"")+
+      (isStale(l)?' <span class="badge b-stale">Stale</span>':"")+"</td>"+
+      '<td class="muted">'+esc(l.lastVerified||"never")+"</td>";
+    tr.onclick = ()=>openDrawer(l.id);
+    tr.querySelector(".st-btn").onclick = (e)=>{ e.stopPropagation(); statusMenu(e, l); };
+    tb.appendChild(tr);
+  });
+  $("emptyMsg").style.display = rows.length?"none":"block";
+  $("emptyMsg").innerHTML = deadView ? '<span class="big">💀</span>No dead leads yet.' :
+    '<span class="big">🎯</span>No leads match. Adjust filters, or hit <b>Request leads</b> for a fresh researched batch.';
+  const all = MEM.leads, dead = all.filter(isDead);
+  $("navLeadCnt").textContent = all.length - dead.length;
+  $("navListCnt").textContent = MEM.lists.filter(x=>!x.archived).length;
+  $("btnDead").textContent = deadView ? "← Back to active" : "💀 Dead leads ("+dead.length+")";
+  refreshDropdowns();
+}
+$("btnDead").onclick = ()=>{ deadView = !deadView; renderLeads(); };
+function statusMenu(e, lead){
+  document.querySelectorAll(".smenu").forEach(m=>m.remove());
+  const m = document.createElement("div"); m.className="smenu";
+  [["Researching","m-res","🔍 Researching"],["Added","m-add","✓ Added"],["Not Applicable","m-na","✕ Not applicable"]].forEach(([val,cls,label])=>{
+    const b = document.createElement("button"); b.className=cls; b.textContent=label;
+    b.onclick = (ev)=>{ ev.stopPropagation(); lead.status=val; store(); m.remove(); renderLeads();
+      toast(val==="Not Applicable" ? "Moved to dead leads" : "Marked "+val); };
+    m.appendChild(b);
+  });
+  document.body.appendChild(m);
+  const x = Math.min(e.clientX, window.innerWidth-180), y = Math.min(e.clientY+8, window.innerHeight-150);
+  m.style.left=x+"px"; m.style.top=y+"px";
+  setTimeout(()=>document.addEventListener("click", function close(){ m.remove(); document.removeEventListener("click", close); }), 0);
+}
+function refreshDropdowns(){
+  const states = [...new Set(MEM.leads.map(l=>l.state).filter(Boolean))].sort();
+  const pas = [...new Set(MEM.leads.map(l=>l.practiceArea).filter(Boolean))].sort();
+  const fill = (el, vals, label, fmt)=>{
+    const cur = el.value; el.innerHTML = '<option value="">'+label+"</option>";
+    vals.forEach(v=>{ const o=document.createElement("option"); o.value=fmt?v.id:v; o.textContent=fmt?fmt(v):v; el.appendChild(o); });
+    el.value = cur;
+  };
+  fill($("qState"), states, "All states");
+  fill($("qPractice"), pas, "All practice areas");
+  fill($("qList"), MEM.lists.filter(x=>!x.archived), "All lists", x=>x.name);
+  const owners = [...new Set(MEM.leads.map(l=>l.owner).filter(Boolean))].sort();
+  fill($("qOwner"), owners, "Any owner");
+}
+["qSearch","qState","qPractice","qStatus","qOwner","qSizeMin","qSizeMax","qList"].forEach(id=>{ $(id).addEventListener("input", renderLeads); });
+document.addEventListener("keydown", e=>{
+  if(e.key==="/" && document.activeElement && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); $("qSearch").focus(); }
+});
+$("qSearch").addEventListener("focus", ()=>{ if(!$("page-leads").classList.contains("active")) go("leads"); });
+
+/* ================= DRAWER ================= */
+function blankLead(){
+  return {id:uid(), firstName:"", lastName:"", title:"", firm:"", website:"", city:"", state:"", practiceArea:"",
+    firmSize:"", email:"", phone:"", linkedinUrl:"", tenureYears:"", status:"New", owner:"", followUp:"",
+    checks:{}, lastVerified:"", notes:"", altContacts:[], listId:"", source:"manual", added:today()};
+}
+$("btnAddLead").onclick = ()=>{ const l=blankLead(); l.listId = $("qList").value || "legacy"; ensureLegacy(); MEM.leads.unshift(l); store(); renderLeads(); openDrawer(l.id); };
+function ensureLegacy(){ if(!MEM.lists.find(x=>x.id==="legacy")) MEM.lists.push({id:"legacy",name:"Earlier leads",created:today(),archived:false}); }
+
+function openDrawer(id){
+  const l = MEM.leads.find(x=>x.id===id); if(!l) return;
+  const d = $("drawer");
+  const stateOpts = Object.keys(STATE_NAMES).map(c=>'<option value="'+c+'"'+(l.state===c?" selected":"")+">"+c+"</option>").join("");
+  const listOpts = MEM.lists.map(x=>'<option value="'+x.id+'"'+(l.listId===x.id?" selected":"")+">"+esc(x.name)+"</option>").join("");
+  function fld(label,fid,val,type){ return '<div class="field"><label>'+label+'</label><input id="'+fid+'"'+(type?' type="'+type+'"':"")+' value="'+esc(val)+'"></div>'; }
+  d.innerHTML =
+    '<div class="row" style="justify-content:space-between; margin-bottom:12px;">'+
+      '<h2 style="margin:0;">'+esc(l.firm||"New lead")+'</h2>'+
+      '<button class="btn ghost sm" id="dClose">Close ✕</button></div>'+
+    '<div class="check-item" style="margin-bottom:14px;background:var(--blue-bg);">'+
+      '<div class="avatar">'+esc(initials(l))+'</div>'+
+      '<span class="nm"><span class="dim" style="text-transform:uppercase;letter-spacing:.6px;font-size:10px;">Believed decision maker</span><br>'+
+      '<b style="font-size:14px;">'+esc((l.firstName+" "+l.lastName).trim()||"—")+'</b> <span class="muted">'+esc(l.title||"")+'</span><br>'+
+      (l.email?'<span class="muted">'+esc(l.email)+'</span>':'<span class="dim">no email on file</span>')+
+      (l.phone?'<span class="muted"> · '+esc(l.phone)+'</span>':"")+'</span>'+
+      (l.email?'<button class="btn ghost sm" id="dCopyEmail" title="Copy email">📋</button><a class="btn sm" id="dMailto" title="Compose email">✉️</a>':"")+
+    '</div>'+
+    '<div class="grid2">'+
+      fld("Firm","dFirm",l.firm)+fld("Firm website","dWebsite",l.website)+
+      fld("City","dCity",l.city)+
+      '<div class="field"><label>State</label><select id="dState"><option value="">—</option>'+stateOpts+"</select></div>"+
+      fld("Practice area","dPractice",l.practiceArea)+fld("Size (attorneys)","dSize",l.firmSize)+
+      '<div class="field"><label>Status</label><select id="dStatus">'+
+        ["New","Researching","Added","Verified","Contacted","Not Applicable","Rejected"].map(x=>'<option'+(l.status===x?" selected":"")+">"+x+"</option>").join("")+"</select></div>"+
+      '<div class="field"><label>List</label><select id="dList">'+listOpts+"</select></div>"+
+      fld("Owner (who's working this)","dOwner",l.owner||"")+
+      fld("Follow-up date","dFollow",l.followUp||"","date")+
+    "</div>"+
+    "<h3 style='margin-top:16px;'>Decision maker details</h3>"+
+    '<div class="grid2">'+
+      fld("First name","dFirst",l.firstName)+fld("Last name","dLast",l.lastName)+
+      fld("Title","dTitle",l.title)+fld("Email","dEmail",l.email)+
+      fld("Phone","dPhone",l.phone)+fld("Years in role","dTenure",l.tenureYears)+
+    "</div>"+
+    '<div class="field" style="margin-top:10px;"><label>Notes</label><textarea id="dNotes" style="width:100%;min-height:60px;">'+esc(l.notes)+"</textarea></div>"+
+    "<h3 style='margin-top:18px;'>Other contacts at this firm <span class='muted'>("+((l.altContacts||[]).length)+")</span></h3>"+
+    '<p class="muted" style="margin-bottom:8px;">One decision maker per firm — backups live here so the same firm is never contacted twice. ★ swaps one in as primary.</p>'+
+    (((l.altContacts||[]).length ? l.altContacts.map((a,i)=>
+      '<div class="check-item"><span class="nm">'+esc((a.firstName||"")+" "+(a.lastName||""))+
+      '<br><span class="muted" style="font-weight:400;">'+esc(a.title||"")+(a.email?" · "+esc(a.email):"")+(a.phone?" · "+esc(a.phone):"")+"</span></span>"+
+      '<button class="btn ghost sm alt-pro" data-i="'+i+'" title="Make primary contact">★</button>'+
+      '<button class="btn danger sm alt-del" data-i="'+i+'" title="Remove">✕</button></div>').join("")
+      : '<p class="muted">None on file.</p>'))+
+    "<h3 style='margin-top:18px;'>Verification checklist</h3>"+
+    '<p class="muted" style="margin-bottom:8px;">Open each source, mark ✓ or ✕. Last verified: <b>'+(l.lastVerified||"never")+"</b></p>"+
+    CHECKS.map(c=>{
+      const v = l.checks[c.key]||null;
+      return '<div class="check-item"><span class="nm">'+c.label+'</span>'+
+        '<div class="tri" data-check="'+c.key+'">'+
+        '<button data-v="pass" class="'+(v==="pass"?"on-pass":"")+'">✓</button>'+
+        '<button data-v="fail" class="'+(v==="fail"?"on-fail":"")+'">✕</button></div></div>';
+    }).join("")+
+    "<h3 style='margin-top:14px;'>One-click source lookups</h3><div id='dLinks'></div>"+
+    '<div class="row" style="margin-top:18px;">'+
+      '<button class="btn grad" id="dVerifyNow">Mark verified today</button>'+
+      '<button class="btn ghost" id="dSave">Save</button>'+
+      '<span style="flex:1;"></span><button class="btn danger" id="dDelete">Delete lead</button></div>';
+  $("dLinks").innerHTML = leadLinks(l).map(k=>'<a class="pill-link" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(k.label)+" ↗</a>").join("");
+  if(l.email){
+    $("dCopyEmail").onclick = (e)=>{ e.stopPropagation();
+      const ta=document.createElement("textarea"); ta.value=l.email; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); toast("Email copied"); };
+    $("dMailto").href = "mailto:"+encodeURIComponent(l.email)+"?subject="+encodeURIComponent("Quick question for "+(l.firm||"your firm"));
+  }
+
+  function pull(){
+    l.firstName=$("dFirst").value.trim(); l.lastName=$("dLast").value.trim(); l.title=$("dTitle").value.trim();
+    l.firm=$("dFirm").value.trim(); l.website=$("dWebsite").value.trim();
+    l.city=$("dCity").value.trim(); l.state=$("dState").value;
+    l.practiceArea=$("dPractice").value.trim(); l.firmSize=$("dSize").value.trim();
+    l.email=$("dEmail").value.trim(); l.phone=$("dPhone").value.trim();
+    l.tenureYears=$("dTenure").value.trim(); l.status=$("dStatus").value; l.listId=$("dList").value;
+    l.owner=$("dOwner").value.trim(); l.followUp=$("dFollow").value; l.notes=$("dNotes").value;
+  }
+  d.querySelectorAll(".tri").forEach(tri=>{
+    tri.querySelectorAll("button").forEach(b=>{
+      b.onclick = (e)=>{ e.stopPropagation();
+        const k=tri.dataset.check, v=b.dataset.v;
+        l.checks[k] = (l.checks[k]===v)?null:v;
+        pull(); store(); openDrawer(id); renderLeads();
+      };
+    });
+  });
+  d.querySelectorAll(".alt-pro").forEach(b=>{ b.onclick = (e)=>{ e.stopPropagation(); pull(); promoteAlt(id, parseInt(b.dataset.i)); }; });
+  d.querySelectorAll(".alt-del").forEach(b=>{ b.onclick = (e)=>{ e.stopPropagation(); if(confirm("Remove this alternate contact?")){ pull(); removeAlt(id, parseInt(b.dataset.i)); } }; });
+  $("dClose").onclick = closeDrawer;
+  $("dSave").onclick = ()=>{ pull(); store(); renderLeads(); toast("Saved"); };
+  $("dVerifyNow").onclick = ()=>{ pull(); l.lastVerified=today(); store(); openDrawer(id); renderLeads(); toast("Verification date set to today"); };
+  $("dDelete").onclick = ()=>{ if(confirm("Delete this lead?")){ MEM.leads=MEM.leads.filter(x=>x.id!==id); store(); closeDrawer(); renderLeads(); } };
+  d.classList.add("open"); $("overlay").classList.add("show");
+}
+function closeDrawer(){ $("drawer").classList.remove("open"); $("overlay").classList.remove("show"); }
+$("overlay").onclick = closeDrawer;
+
+/* ================= DASHBOARD ================= */
+function hbar(label, n, max, suffix){
+  const w = max? Math.round(n/max*100) : 0;
+  return '<div class="hbar"><span class="lbl" title="'+esc(label)+'">'+esc(label)+'</span><div class="trk"><div class="fil" style="width:'+w+'%"></div></div><span class="num">'+n+(suffix||"")+"</span></div>";
+}
+function renderDash(){
+  const all = MEM.leads, dead = all.filter(isDead), live = all.filter(l=>!isDead(l));
+  const added = all.filter(l=>l.status==="Added").length;
+  const withEmail = live.filter(l=>l.email).length;
+  const due = live.filter(followUpDue).length;
+  const wk = live.filter(l=>daysSince(l.added)<=7).length;
+  $("dashStats").innerHTML =
+    '<div class="stat"><div class="v">'+live.length+'</div><div class="l">Active leads</div></div>'+
+    '<div class="stat green"><div class="v">'+added+'</div><div class="l">Added to outreach</div></div>'+
+    '<div class="stat blue"><div class="v">'+withEmail+'</div><div class="l">With email ('+(live.length?Math.round(withEmail/live.length*100):0)+'%)</div></div>'+
+    '<div class="stat amber"><div class="v">'+due+'</div><div class="l">Follow-ups due</div></div>'+
+    '<div class="stat"><div class="v">'+wk+'</div><div class="l">New this week</div></div>'+
+    '<div class="stat red"><div class="v">'+dead.length+'</div><div class="l">Dead / not applicable</div></div>';
+  const byStatus = {};
+  live.forEach(l=>{ byStatus[l.status||"New"]=(byStatus[l.status||"New"]||0)+1; });
+  const maxS = Math.max(1,...Object.values(byStatus));
+  $("dashPipe").innerHTML = Object.entries(byStatus).sort((a,b)=>b[1]-a[1]).map(([k,v])=>hbar(k,v,maxS)).join("") || '<p class="muted">No data yet.</p>';
+  const byPa = {};
+  live.forEach(l=>{ if(l.practiceArea) byPa[l.practiceArea]=(byPa[l.practiceArea]||0)+1; });
+  const maxP = Math.max(1,...Object.values(byPa),0);
+  $("dashPractice").innerHTML = Object.entries(byPa).sort((a,b)=>b[1]-a[1]).map(([k,v])=>hbar(k,v,maxP)).join("") || '<p class="muted">No data yet.</p>';
+  const bySt = {};
+  live.forEach(l=>{ if(l.state) bySt[l.state]=(bySt[l.state]||0)+1; });
+  const maxT = Math.max(1,...Object.values(bySt),0);
+  $("dashStates").innerHTML = Object.entries(bySt).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>hbar(STATE_NAMES[k]||k,v,maxT)).join("") || '<p class="muted">No data yet.</p>';
+  $("dashLists").innerHTML = MEM.lists.filter(x=>!x.archived).slice(-4).reverse().map(x=>{
+    const n = MEM.leads.filter(l=>l.listId===x.id && !isDead(l)).length;
+    return '<div class="hbar"><span class="lbl">🗂️ '+esc(x.name)+'</span><span class="muted" style="margin-left:auto;">'+n+' leads · '+esc(x.created)+"</span></div>";
+  }).join("") || '<p class="muted" style="margin-bottom:10px;">No lists yet — request your first batch.</p>';
+}
+
+/* ================= LISTS ================= */
+function renderLists(){
+  const showArch = $("showArchived").checked;
+  const wrap = $("listCards"); wrap.innerHTML = "";
+  const lists = MEM.lists.slice().reverse().filter(x=>showArch || !x.archived);
+  if(!lists.length){ wrap.innerHTML = '<div class="card empty"><span class="big">🗂️</span>No lists yet. Each research batch or import becomes a dated list here.</div>'; return; }
+  lists.forEach(x=>{
+    const leads = MEM.leads.filter(l=>l.listId===x.id);
+    const active = leads.filter(l=>!isDead(l)).length, added = leads.filter(l=>l.status==="Added").length, dead = leads.filter(isDead).length;
+    const div = document.createElement("div"); div.className = "list-card"+(x.archived?" archived":"");
+    div.innerHTML = '<div class="ic2">🗂️</div><div class="info"><b>'+esc(x.name)+'</b><span class="muted">'+esc(x.created)+" · "+active+" active · "+added+" added · "+dead+" dead</span></div>";
+    const open = document.createElement("button"); open.className="btn sm"; open.textContent="Open";
+    open.onclick = ()=>{ $("qList").value=x.id; deadView=false; go("leads"); renderLeads(); };
+    const ren = document.createElement("button"); ren.className="btn ghost sm"; ren.textContent="Rename";
+    ren.onclick = ()=>{ const n=prompt("List name:", x.name); if(n){ x.name=n; store(); renderLists(); renderLeads(); } };
+    const arch = document.createElement("button"); arch.className="btn ghost sm"; arch.textContent = x.archived?"Unarchive":"Archive";
+    arch.onclick = ()=>{ x.archived=!x.archived; store(); renderLists(); renderLeads(); };
+    const del = document.createElement("button"); del.className="btn danger sm"; del.textContent="✕";
+    del.onclick = ()=>{ if(confirm("Delete list AND its "+leads.length+" leads?")){ MEM.leads=MEM.leads.filter(l=>l.listId!==x.id); MEM.lists=MEM.lists.filter(y=>y.id!==x.id); store(); renderLists(); renderLeads(); } };
+    div.append(open,ren,arch,del); wrap.appendChild(div);
+  });
+}
+$("btnNewList").onclick = ()=>{
+  const n = $("newListName").value.trim(); if(!n) return toast("Name the list first");
+  MEM.lists.push({id:uid(), name:n, created:today(), archived:false}); store();
+  $("newListName").value=""; renderLists(); refreshDropdowns(); toast("List created");
+};
+$("showArchived").onchange = renderLists;
+
+/* ================= REQUEST BRIEF + IN-PAGE GENERATION ================= */
+function buildBrief(){
+  return "You are my legal/finance lead researcher. Build me a verified prospect list.\n\n"+
+  "CRITERIA\n"+
+  "- Geography: "+($("pGeo").value||"any US state")+"\n"+
+  "- Practice area(s): "+($("pPractice").value||"any")+"\n"+
+  "- Firm size: "+(($("pSizeMin").value||$("pSizeMax").value) ? ($("pSizeMin").value||"1")+"–"+($("pSizeMax").value||"no max")+" attorneys" : "any")+"\n"+
+  "- Target roles: "+$("pRoles").value+"\n"+
+  "- Number of firms: "+$("pCount").value+"\n"+
+  ($("pExtra").value?"- Extra requirements: "+$("pExtra").value+"\n":"")+
+  "\nMETHOD (do not skip)\n"+
+  "1. Identify firms matching the criteria using web search.\n"+
+  "2. For each firm, identify THE single main decision maker from the FIRM'S OWN WEBSITE (not a data broker). ONE ROW PER FIRM — never output two rows from the same firm. Other relevant people (practice leads, co-founders, COO) go in the altContacts column as backups.\n"+
+  "3. Fact-check each person against at least two of: the firm website bio, the state bar attorney search for their state, Best Lawyers/Martindale/Chambers, LinkedIn, recent news.\n"+
+  "4. Only include a person if their current role is confirmed by the firm website OR two independent sources. Flag anything uncertain in the notes column instead of guessing.\n"+
+  "5. EMAIL IS MANDATORY where any path exists: (a) use the published address if available; (b) otherwise determine the firm's email naming convention (from any published attorney email on the firm site, or email-format records) and derive the address — put 'pattern-derived from <evidence>' in notes; (c) only leave blank if no convention is discoverable, and say why in notes.\n"+
+  "\nOUTPUT\nReturn ONLY a CSV code block with this exact header:\n"+
+  "firstName,lastName,title,firm,website,city,state,practiceArea,firmSize,email,phone,tenureYears,lastVerified,notes,altContacts\n"+
+  "- website = the firm's website URL (mandatory — find it for every firm).\n"+
+  "- altContacts = backup people at the same firm, formatted 'First Last (Title) email; First Last (Title) email'. One row per firm, always.\n"+
+  "- state = 2-letter code. lastVerified = today's date for verified rows. firmSize = attorney count if known.\n"+
+  "- In notes, list which sources confirmed the person (e.g. \"firm bio + TX bar active + Best Lawyers 2026\").";
+}
+$("btnGenPrompt").onclick = ()=>{
+  $("promptOut").value = buildBrief(); $("promptOut").style.display="block"; $("btnCopyPrompt").style.display="inline-block";
+};
+$("btnCopyPrompt").onclick = ()=>{ $("promptOut").select(); document.execCommand("copy"); toast("Copied — paste it to Claude"); };
+
+const API_KEY_KEY = "leadforge_apikey";
+$("btnSaveKey").onclick = ()=>{
+  const k = $("apiKey").value.trim();
+  if(!k){ localStorage.removeItem(API_KEY_KEY); toast("Key cleared"); return; }
+  localStorage.setItem(API_KEY_KEY, k); toast("Key saved in this browser");
+};
+if(localStorage.getItem(API_KEY_KEY)) $("apiKey").value = localStorage.getItem(API_KEY_KEY);
+
+async function runClaude(){
+  const key = (localStorage.getItem(API_KEY_KEY)||"").trim();
+  if(!key){ toast("Add your Anthropic API key below first"); $("apiKey").focus(); return; }
+  const btn = $("btnRunClaude"); btn.disabled = true; btn.textContent = "✨ Generating…";
+  const phases = ["✨ Generating leads with Claude…","🔎 Searching for matching firms…","🧑‍⚖️ Reading firm websites…","⚖️ Cross-checking bars & directories…","📧 Deriving email patterns…","🧹 Compiling one decision maker per firm…"];
+  let pi = 0; $("genStatus").textContent = phases[0];
+  const tick = setInterval(()=>{ pi=(pi+1)%phases.length; $("genStatus").textContent = phases[pi]+" (2–4 min total)"; }, 15000);
+  try{
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{
+        "content-type":"application/json",
+        "x-api-key":key,
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-direct-browser-access":"true"
+      },
+      body: JSON.stringify({
+        model:"claude-sonnet-4-6",
+        max_tokens:8000,
+        tools:[{type:"web_search_20250305", name:"web_search", max_uses:20}],
+        messages:[{role:"user", content: buildBrief()+"\n\nIMPORTANT: after researching, respond with ONLY the CSV code block — no commentary."}]
+      })
+    });
+    if(!res.ok){
+      const t = await res.text();
+      throw new Error(res.status===401 ? "API key rejected — check it at console.anthropic.com" : "API error "+res.status+": "+t.slice(0,180));
+    }
+    const data = await res.json();
+    const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    const m = text.match(/```(?:csv)?\s*\n([\s\S]*?)```/);
+    const csv = m ? m[1] : (text.trim().slice(0,9)==="firstName" ? text.trim() : null);
+    if(!csv) throw new Error("Claude didn't return a CSV this time — run it again, or use the manual brief.");
+    const r = importCsvText(csv, "Claude run — "+today());
+    if(r.error) throw new Error(r.error);
+    toast("✨ "+r.added+" new verified leads loaded into \""+r.listName+"\"");
+    go("leads"); refreshDropdowns(); $("qList").value = r.listId; renderLeads();
+  } catch(err){
+    alert("Generation failed: "+err.message);
+  } finally {
+    clearInterval(tick); btn.disabled = false; btn.textContent = "✨ Generate leads with Claude"; $("genStatus").textContent = "";
+  }
+}
+$("btnRunClaude").onclick = runClaude;
+
+/* ================= DIRECTORY ================= */
+function renderDirectory(){
+  const nm = $("dirName").value.trim(), flt = $("dirFilter").value.toLowerCase();
+  const g = $("barGrid"); g.innerHTML="";
+  Object.keys(STATE_BARS).sort((a,b)=>STATE_NAMES[a].localeCompare(STATE_NAMES[b])).forEach(c=>{
+    if(flt && !STATE_NAMES[c].toLowerCase().includes(flt) && !c.toLowerCase().includes(flt)) return;
+    const b = STATE_BARS[c];
+    const direct = b.q && nm ? b.url.replace("{q}", encodeURIComponent(nm)) : b.url.replace("{q}","");
+    const site = gsearch("site:"+barHost(b.url)+(nm?" "+nm:" attorney search"));
+    const fb = gsearch(STATE_NAMES[c]+" state bar attorney search"+(nm?" "+nm:""));
+    const div = document.createElement("div"); div.className="bar-card";
+    div.innerHTML = "<b>"+STATE_NAMES[c]+(b.v?' <span class="badge b-verified">✓</span>':"")+"</b>"+
+      (b.v ? "<a href='"+esc(direct)+"' target='_blank' rel='noopener'>"+esc(b.name)+" ↗</a><br><a class='dim' href='"+esc(site)+"' target='_blank' rel='noopener'>site search</a>"
+           : "<a href='"+esc(site)+"' target='_blank' rel='noopener'>"+esc(b.name)+" (site search) ↗</a><br><a class='dim' href='"+esc(direct)+"' target='_blank' rel='noopener'>direct (unverified)</a> · <a class='dim' href='"+esc(fb)+"' target='_blank' rel='noopener'>web</a>");
+    g.appendChild(div);
+  });
+  $("natSources").innerHTML = NATIONAL_SOURCES.map(s=>
+    '<div class="check-item"><span class="nm"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.name)+' ↗</a></span><span class="muted">'+esc(s.note)+"</span></div>").join("");
+}
+$("dirName").addEventListener("input", renderDirectory);
+$("dirFilter").addEventListener("input", renderDirectory);
+
+/* ================= CSV IMPORT/EXPORT ================= */
+function parseCSV(text, delim){
+  delim = delim || ",";
+  const rows=[]; let row=[], cell="", inQ=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(inQ){ if(ch==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else inQ=false; } else cell+=ch; }
+    else if(ch==='"') inQ=true;
+    else if(ch===delim){ row.push(cell); cell=""; }
+    else if(ch==="\n"||ch==="\r"){ if(cell!==""||row.length){ row.push(cell); rows.push(row); row=[]; cell=""; } if(ch==="\r"&&text[i+1]==="\n")i++; }
+    else cell+=ch;
+  }
+  if(cell!==""||row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+function detectDelim(line){
+  const counts = {",":0, ";":0, "\t":0}; let inQ=false;
+  for(const ch of line){ if(ch==='"') inQ=!inQ; else if(!inQ && counts[ch]!=null) counts[ch]++; }
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+}
+const HEADER_MAP = {
+  firstname:"firstName","first name":"firstName", lastname:"lastName","last name":"lastName",
+  "full name":"_fullName", name:"_fullName",
+  title:"title","job title":"title",
+  firm:"firm",company:"firm","company name":"firm","account name":"firm",
+  city:"city","person city":"city", state:"state","person state":"state",
+  practicearea:"practiceArea","practice area":"practiceArea",specialty:"practiceArea",
+  firmsize:"firmSize","firm size":"firmSize",employees:"firmSize","# employees":"firmSize","number of employees":"firmSize",
+  email:"email","email address":"email","work email":"email",
+  phone:"phone","direct phone":"phone","phone number":"phone","direct phone number":"phone","mobile phone":"phone",
+  tenureyears:"tenureYears","years in role":"tenureYears",
+  website:"website","firm website":"website","company website":"website","website url":"website","company domain":"website",domain:"website",
+  altcontacts:"_altRaw","alt contacts":"_altRaw","other contacts":"_altRaw",
+  lastverified:"lastVerified", notes:"notes", linkedin:"linkedinUrl","linkedin url":"linkedinUrl","linkedin contact profile url":"linkedinUrl","person linkedin url":"linkedinUrl",
+  "first_name":"firstName","last_name":"lastName","job_title":"title","company_name":"firm","email_address":"email","full_name":"_fullName","contact name":"_fullName",
+  owner:"owner","lead owner":"owner",followup:"followUp","follow up":"followUp","follow-up":"followUp","follow up date":"followUp",
+  "work phone":"phone","office phone":"phone","company phone":"phone","corporate phone":"phone","contact city":"city","contact state":"state",
+  status:"status"
+};
+function importCsvText(rawText, label){
+  const text = String(rawText||"").replace(/^\uFEFF/,"");
+  const firstLine = text.split(/\r?\n/)[0]||"";
+  const rows = parseCSV(text, detectDelim(firstLine));
+  if(rows.length<2) return {added:0, skipped:0, error:"No data rows found in the file."};
+  const rawHdr = rows[0].map(h=>String(h||"").replace(/^\uFEFF/,"").replace(/^["']+|["']+$/g,"").trim().toLowerCase());
+  const hdr = rawHdr.map(h=>HEADER_MAP[h]||null);
+  if(!hdr.includes("firstName") && !hdr.includes("_fullName"))
+    return {added:0, skipped:rows.length-1, error:"Couldn't find a name column. Headers found: "+rawHdr.filter(Boolean).slice(0,12).join(" · ")+". Expected something like 'First Name' / 'Last Name' or 'Full Name'."};
+  const list = {id:uid(), name:label, created:today(), archived:false};
+  MEM.lists.push(list);
+  let added=0, skipped=0;
+  for(let i=1;i<rows.length;i++){
+    if(rows[i].every(c=>!String(c||"").trim())) continue;
+    const l = blankLead(); l.source="import"; l.listId=list.id; l.status="Researching";
+    rows[i].forEach((v,j)=>{
+      const k = hdr[j]; if(!k) return; v=String(v||"").trim();
+      if(k==="_fullName"){ const parts=v.split(/\s+/); l.firstName=l.firstName||parts[0]||""; l.lastName=l.lastName||parts.slice(1).join(" "); }
+      else if(k==="_altRaw"){
+        l.altContacts = v.split(/;\s*/).filter(Boolean).map(s=>{
+          const em = (s.match(/\S+@\S+/)||[])[0]||"";
+          const ti = (s.match(/\(([^)]*)\)/)||[])[1]||"";
+          const nm2 = s.replace(/\([^)]*\)/,"").replace(em,"").trim().split(/\s+/);
+          return {firstName:nm2[0]||"", lastName:nm2.slice(1).join(" "), title:ti, email:em, phone:"", notes:"imported alternate"};
+        });
+      }
+      else if(!l[k]) l[k]=v;
+    });
+    if(l.state && l.state.length>2) l.state = STATE_TO_CODE[l.state.toLowerCase()]||l.state;
+    l.state = (l.state||"").toUpperCase().slice(0,2);
+    if(!l.firstName && !l.lastName){ skipped++; continue; }
+    const dup = MEM.leads.find(x=>x.firstName.toLowerCase()===l.firstName.toLowerCase() && x.lastName.toLowerCase()===l.lastName.toLowerCase() && (x.firm||"").toLowerCase()===(l.firm||"").toLowerCase());
+    if(dup){ skipped++; continue; }
+    MEM.leads.push(l); added++;
+  }
+  const consolidated = dedupeByFirm();
+  if(!added){ MEM.lists = MEM.lists.filter(x=>x.id!==list.id); }
+  store(); renderLeads();
+  const unknown = rawHdr.filter((h,i2)=>h && !hdr[i2]);
+  return {added, skipped, consolidated, listId:list.id, listName:list.name, unknown};
+}
+const STATE_TO_CODE = {}; Object.keys(STATE_NAMES).forEach(c=>STATE_TO_CODE[STATE_NAMES[c].toLowerCase()]=c);
+$("csvFile").addEventListener("change", e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    const r = importCsvText(rd.result, (f.name.replace(/\.csv$/i,"")||"Import")+" — "+today());
+    if(r.error){ $("importResult").textContent = "⚠ Import failed: "+r.error; toast("Import failed — see message above"); return; }
+    $("importResult").textContent = "Imported "+r.added+" leads into \""+r.listName+"\" ("+r.skipped+" skipped as duplicates/empty"+
+      (r.consolidated?", "+r.consolidated+" same-firm contacts filed as backups":"")+")."+
+      (r.unknown && r.unknown.length ? " Ignored columns: "+r.unknown.slice(0,8).join(", ")+"." : "");
+    toast("Imported "+r.added+" leads"+(r.consolidated?" · "+r.consolidated+" merged into backups":""));
+  };
+  rd.readAsText(f); e.target.value="";
+});
+const EXPORT_COLS = ["firstName","lastName","title","firm","website","city","state","practiceArea","firmSize","email","phone","tenureYears","status","owner","followUp","lastVerified","notes"];
+$("btnExportCsv").onclick = ()=>{
+  const rows = filteredLeads();
+  const csvCell = v => { v=String(v==null?"":v); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
+  const altStr = l => (l.altContacts||[]).map(a=>((a.firstName||"")+" "+(a.lastName||"")).trim()+(a.title?" ("+a.title+")":"")+(a.email?" "+a.email:"")).join("; ");
+  const lines = [EXPORT_COLS.concat(["list","altContacts"]).join(",")];
+  rows.forEach(l=>lines.push(EXPORT_COLS.map(k=>csvCell(l[k])).concat([csvCell(listName(l.listId)), csvCell(altStr(l))]).join(",")));
+  download("leadforge-export-"+today()+".csv", lines.join("\n"), "text/csv");
+};
+$("btnExportJson").onclick = ()=> download("leadforge-backup-"+today()+".json", JSON.stringify(MEM,null,2), "application/json");
+$("jsonFile").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload = ()=>{ try{ MEM=Object.assign({leads:[],views:{},lists:[]},JSON.parse(rd.result)); store(); renderViews(); renderLeads(); renderDash(); toast("Backup restored"); }catch(err){ toast("Invalid backup file"); } };
+  rd.readAsText(f); e.target.value="";
+});
+function download(name, content, type){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content],{type:type}));
+  a.download = name; a.click(); URL.revokeObjectURL(a.href);
+}
+$("btnWipe").onclick = ()=>{ if(confirm("Delete ALL leads and lists? Export a backup first if unsure.")){ MEM.leads=[]; MEM.lists=[]; store(); renderLeads(); renderDash(); renderLists(); } };
+
+/* ================= THEME ================= */
+function applyTheme(t){
+  document.body.classList.toggle("dark", t==="dark");
+  $("themeIcon").textContent = t==="dark" ? "☀️" : "🌙";
+  $("themeLabel").textContent = t==="dark" ? "Light mode" : "Dark mode";
+  try{ localStorage.setItem("leadforge_theme", t); }catch(e){}
+  if($("page-map").classList.contains("active")) renderMap();
+}
+$("themeToggle").onclick = ()=>applyTheme(document.body.classList.contains("dark") ? "light" : "dark");
+
+/* ================= FIRM MAP (day/night) ================= */
+const CITY_COORDS = {
+  "philadelphia":[39.95,-75.17],"washington":[38.91,-77.04],"new york":[40.71,-74.01],"atlanta":[33.75,-84.39],
+  "miami":[25.76,-80.19],"parsippany":[40.86,-74.43],"westport":[41.14,-73.36],"norristown":[40.12,-75.34],
+  "boston":[42.36,-71.06],"fairfax":[38.85,-77.31],"los angeles":[34.05,-118.24],"san francisco":[37.77,-122.42],
+  "chicago":[41.88,-87.63],"houston":[29.76,-95.37],"dallas":[32.78,-96.80],"austin":[30.27,-97.74],
+  "seattle":[47.61,-122.33],"denver":[39.74,-104.99],"phoenix":[33.45,-112.07],"san diego":[32.72,-117.16],
+  "charlotte":[35.23,-80.84],"raleigh":[35.78,-78.64],"nashville":[36.16,-86.78],"tampa":[27.95,-82.46],
+  "orlando":[28.54,-81.38],"jacksonville":[30.33,-81.66],"baltimore":[39.29,-76.61],"pittsburgh":[40.44,-79.99],
+  "cleveland":[41.50,-81.69],"columbus":[39.96,-83.00],"cincinnati":[39.10,-84.51],"detroit":[42.33,-83.05],
+  "minneapolis":[44.98,-93.27],"st. louis":[38.63,-90.20],"kansas city":[39.10,-94.58],"new orleans":[29.95,-90.07],
+  "salt lake city":[40.76,-111.89],"las vegas":[36.17,-115.14],"portland":[45.52,-122.68],"sacramento":[38.58,-121.49],
+  "san jose":[37.34,-121.89],"indianapolis":[39.77,-86.16],"milwaukee":[43.04,-87.91],"memphis":[35.15,-90.05],
+  "richmond":[37.54,-77.44],"hartford":[41.76,-72.68],"providence":[41.82,-71.41],"newark":[40.74,-74.17],
+  "stamford":[41.05,-73.54],"greenwich":[41.03,-73.63],"white plains":[41.03,-73.76],"albany":[42.65,-73.75],
+  "buffalo":[42.89,-78.88],"san antonio":[29.42,-98.49],"fort worth":[32.75,-97.33],"oklahoma city":[35.47,-97.52],
+  "birmingham":[33.52,-86.81],"louisville":[38.25,-85.76],"tucson":[32.22,-110.97],"el paso":[31.76,-106.49],
+  "honolulu":[21.31,-157.86],"anchorage":[61.22,-149.90]
+};
+const STATE_CENTER = {AL:[32.8,-86.8],AK:[64.2,-149.5],AZ:[34.3,-111.7],AR:[34.9,-92.4],CA:[37.2,-119.3],CO:[39.0,-105.5],CT:[41.6,-72.7],DE:[39.0,-75.5],DC:[38.9,-77.0],FL:[28.6,-82.4],GA:[32.6,-83.4],HI:[20.8,-156.3],ID:[44.4,-114.6],IL:[40.0,-89.2],IN:[39.9,-86.3],IA:[42.0,-93.5],KS:[38.5,-98.4],KY:[37.5,-85.3],LA:[31.0,-92.0],ME:[45.4,-69.2],MD:[39.0,-76.8],MA:[42.3,-71.8],MI:[44.3,-85.4],MN:[46.3,-94.3],MS:[32.7,-89.7],MO:[38.4,-92.5],MT:[47.0,-109.6],NE:[41.5,-99.8],NV:[39.3,-116.6],NH:[43.7,-71.6],NJ:[40.2,-74.7],NM:[34.4,-106.1],NY:[42.9,-75.5],NC:[35.5,-79.4],ND:[47.4,-100.5],OH:[40.3,-82.8],OK:[35.6,-97.5],OR:[43.9,-120.6],PA:[40.9,-77.8],RI:[41.7,-71.6],SC:[33.9,-80.9],SD:[44.4,-100.2],TN:[35.8,-86.4],TX:[31.5,-99.3],UT:[39.3,-111.7],VT:[44.1,-72.7],VA:[37.5,-78.9],WA:[47.4,-120.5],WV:[38.6,-80.6],WI:[44.6,-89.7],WY:[43.0,-107.6]};
+
+function sunElevation(lat, lon, date){
+  const rad = Math.PI/180;
+  const start = Date.UTC(date.getUTCFullYear(),0,0);
+  const doy = (date.getTime()-start)/86400000;
+  const decl = -23.44*Math.cos(2*Math.PI/365*(doy+10));
+  const utcH = date.getUTCHours()+date.getUTCMinutes()/60+date.getUTCSeconds()/3600;
+  const subsolarLon = (12-utcH)*15;
+  let H = lon - subsolarLon;
+  while(H>180) H-=360; while(H<-180) H+=360;
+  const sinEl = Math.sin(lat*rad)*Math.sin(decl*rad)+Math.cos(lat*rad)*Math.cos(decl*rad)*Math.cos(H*rad);
+  return Math.asin(sinEl)/rad;
+}
+/* --- globe view (satellite earth) --- */
+let globeObj = null, globeFailed = false;
+let mapView = (function(){ try{ return localStorage.getItem("leadforge_mapview")||"globe"; }catch(e){ return "globe"; } })();
+function destPoint(lat, lon, bearing, distDeg){
+  const r = Math.PI/180, d = distDeg*r, la = lat*r, lo = lon*r, b = bearing*r;
+  const la2 = Math.asin(Math.sin(la)*Math.cos(d) + Math.cos(la)*Math.sin(d)*Math.cos(b));
+  const lo2 = lo + Math.atan2(Math.sin(b)*Math.sin(d)*Math.cos(la), Math.cos(d)-Math.sin(la)*Math.sin(la2));
+  return [((lo2/r+540)%360)-180, la2/r]; // [lng, lat]
+}
+function nightRegion(date){
+  // night = spherical cap of radius 90° centred on the antisolar point
+  const rad = Math.PI/180;
+  const start = Date.UTC(date.getUTCFullYear(),0,0);
+  const doy = (date.getTime()-start)/86400000;
+  const decl = -23.44*Math.cos(2*Math.PI/365*(doy+10));
+  const utcH = date.getUTCHours()+date.getUTCMinutes()/60;
+  let subLon = (12-utcH)*15; subLon = ((subLon+540)%360)-180;
+  const aLat = -decl, aLon = ((subLon+360)%360)-180; // antisolar
+  const ring = [];
+  for(let b=0; b<=360; b+=4) ring.push(destPoint(aLat, aLon, b, 89.8));
+  const feat = {type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[ring]}};
+  // ensure the polygon encloses the antisolar point (winding can flip the hemisphere)
+  try{ if(typeof d3!=="undefined" && d3.geoContains && !d3.geoContains(feat, [aLon, aLat])) ring.reverse(); }catch(e){}
+  return feat;
+}
+function firmGroups(){
+  const groups = {}; const unplotted = [];
+  MEM.leads.filter(l=>!isDead(l)).forEach(l=>{
+    const c = leadCoord(l);
+    if(!c){ if(l.firm) unplotted.push(l.firm); return; }
+    const key = c.ll.join(",");
+    (groups[key] = groups[key] || {ll:c.ll, leads:[], approx:c.approx}).leads.push(l);
+  });
+  return {groups, unplotted};
+}
+function groupColor(g, cs){
+  const anyAdded = g.leads.some(l=>l.status==="Added");
+  const anyVer = g.leads.some(l=>l.status==="Verified"||l.status==="Contacted");
+  return anyAdded ? "#2fd08c" : anyVer ? "#5aa2ff" : "#e7b54a";
+}
+function renderGlobe(){
+  const el = $("globeWrap");
+  if(typeof Globe === "undefined"){ globeFailed = true; mapView = "flat"; renderMap(); return; }
+  try{
+    const IMG = "https://cdn.jsdelivr.net/npm/three-globe/example/img/";
+    if(!globeObj){
+      globeObj = Globe()(el)
+        .globeImageUrl(IMG+"earth-blue-marble.jpg")
+        .bumpImageUrl(IMG+"earth-topology.png")
+        .backgroundImageUrl(IMG+"night-sky.png")
+        .atmosphereColor("#6ab7ff").atmosphereAltitude(0.18)
+        .width(el.clientWidth || 900).height(560);
+      // high-def: stream satellite tiles that sharpen as you zoom (Esri World Imagery)
+      if(typeof globeObj.globeTileEngineUrl === "function"){
+        globeObj.globeTileEngineUrl((x,y,l)=> "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"+l+"/"+y+"/"+x);
+        if(typeof globeObj.globeTileEngineMaxLevel === "function") globeObj.globeTileEngineMaxLevel(17);
+      }
+      globeObj
+        .polygonCapColor(()=> "rgba(2,6,23,0.62)")
+        .polygonSideColor(()=> "rgba(0,0,0,0)")
+        .polygonStrokeColor(()=> "rgba(0,0,0,0)")
+        .polygonAltitude(0.008)
+        .pointAltitude(d=> d.kind==="firm" ? 0.02 : 0.004)
+        .pointRadius(d=> d.kind==="firm" ? Math.min(1.1, .45 + .18*Math.sqrt(d.count)) : 0.14)
+        .pointColor(d=> d.color)
+        .pointLabel(d=> d.label||"")
+        .onPointClick(d=>{ if(d.kind!=="firm") return;
+          $("qSearch").value = d.city||""; $("qState").value = d.single ? d.state : ""; go("leads"); renderLeads(); })
+        .ringColor(()=> t=> "rgba(47,208,140,"+(1-t)+")")
+        .ringMaxRadius(3.2).ringPropagationSpeed(1.6).ringRepeatPeriod(1400);
+      globeObj.pointOfView({lat:38, lng:-96, altitude:1.45}, 0);
+      const ctl = globeObj.controls(); ctl.autoRotate = true; ctl.autoRotateSpeed = 0.45;
+      el.addEventListener("pointerdown", ()=>{ ctl.autoRotate = false; }, {once:false});
+      window.addEventListener("resize", ()=>{ if(globeObj) globeObj.width($("globeWrap").clientWidth||900); });
+    }
+    const {groups, unplotted} = firmGroups();
+    const pts = [];
+    // ambient "city lights" for atmosphere
+    Object.entries(CITY_COORDS).forEach(([name,ll])=>{
+      pts.push({kind:"light", lat:ll[0], lng:ll[1], color:"rgba(255,214,130,0.75)", label:""});
+    });
+    const rings = [];
+    Object.values(groups).forEach(g=>{
+      const color = groupColor(g);
+      const city = g.leads[0].city || (STATE_NAMES[g.leads[0].state]||"");
+      pts.push({kind:"firm", lat:g.ll[0], lng:g.ll[1], count:g.leads.length, color:color,
+        city:g.leads[0].city, state:g.leads[0].state, single:g.leads.length===1,
+        label:"<div style='background:#0d1320;color:#eaeef5;border:1px solid #2d3e5a;border-radius:9px;padding:7px 11px;font:12px Inter,sans-serif;'><b>"+esc(city)+"</b> · "+g.leads.length+" firm"+(g.leads.length>1?"s":"")+"<br>"+g.leads.slice(0,4).map(l=>esc(l.firm)).join("<br>")+(g.leads.length>4?"<br>+"+(g.leads.length-4)+" more":"")+"</div>"});
+      if(g.leads.some(l=>l.status==="Added")) rings.push({lat:g.ll[0], lng:g.ll[1]});
+    });
+    globeObj.pointsData(pts);
+    globeObj.ringsData(rings);
+    globeObj.polygonsData([nightRegion(new Date())]);
+    const plotted = Object.values(groups).reduce((t,g)=>t+g.leads.length,0);
+    $("mapMeta").textContent = plotted+" firms plotted · sunlight & clocks update live";
+    $("mapUnplotted").textContent = unplotted.length ? "Not plotted (no city/state on file): "+[...new Set(unplotted)].slice(0,6).join(", ") : "";
+  }catch(err){ globeFailed = true; mapView = "flat"; renderMap(); }
+}
+let usTopo = null, mapTimer = null;
+async function loadUs(){
+  if(usTopo) return usTopo;
+  const urls = ["https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json","https://unpkg.com/us-atlas@3/states-10m.json"];
+  for(const u of urls){ try{ const r = await fetch(u); if(r.ok){ usTopo = await r.json(); return usTopo; } }catch(e){} }
+  return null;
+}
+function leadCoord(l){
+  const c = CITY_COORDS[(l.city||"").toLowerCase().trim()];
+  if(c) return {ll:c, approx:false};
+  const s = STATE_CENTER[l.state];
+  if(s) return {ll:s, approx:true};
+  return null;
+}
+function renderClocks(){
+  const zones = [["Eastern","America/New_York",[40.71,-74.01]],["Central","America/Chicago",[41.88,-87.63]],["Mountain","America/Denver",[39.74,-104.99]],["Pacific","America/Los_Angeles",[34.05,-118.24]]];
+  const now = new Date();
+  $("mapClocks").innerHTML = zones.map(([nm,tz,ll])=>{
+    const t = new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",timeZone:tz}).format(now);
+    const el2 = sunElevation(ll[0], ll[1], now);
+    const night = el2 < 0;
+    return '<div class="clock'+(night?" night":"")+'"><span class="sun">'+(night?"🌙":"☀️")+'</span> '+nm+'<b>'+t+"</b></div>";
+  }).join("");
+}
+function renderMap(){
+  renderClocks();
+  const wantGlobe = mapView==="globe" && !globeFailed;
+  $("globeWrap").style.display = wantGlobe ? "block" : "none";
+  $("mapWrap").style.display = wantGlobe ? "none" : "block";
+  $("viewGlobe").style.opacity = wantGlobe ? 1 : .55;
+  $("viewFlat").style.opacity = wantGlobe ? .55 : 1;
+  if(wantGlobe) renderGlobe(); else renderMap2D();
+  if(!mapTimer) mapTimer = setInterval(()=>{ if($("page-map").classList.contains("active")) renderMap(); }, 60000);
+}
+$("viewGlobe").onclick = ()=>{ mapView="globe"; globeFailed=false; try{localStorage.setItem("leadforge_mapview","globe");}catch(e){} renderMap(); };
+$("viewFlat").onclick = ()=>{ mapView="flat"; try{localStorage.setItem("leadforge_mapview","flat");}catch(e){} renderMap(); };
+async function renderMap2D(){
+  const svgEl = $("mapSvg");
+  if(typeof d3==="undefined" || typeof topojson==="undefined"){ $("mapMeta").textContent="Map library blocked by your network — markers unavailable."; return; }
+  const topo = await loadUs();
+  if(!topo){ $("mapMeta").textContent="Couldn't load map data (offline?)."; return; }
+  const svg = d3.select(svgEl); svg.selectAll("*").remove();
+  const proj = d3.geoAlbersUsa().scale(1300).translate([487.5, 305]);
+  const path = d3.geoPath(proj);
+  const states = topojson.feature(topo, topo.objects.states).features;
+  const cs = getComputedStyle(document.body);
+  svg.append("g").selectAll("path").data(states).join("path")
+    .attr("d", path).attr("fill", cs.getPropertyValue("--map-land").trim()||"#dbe4f0")
+    .attr("stroke", cs.getPropertyValue("--map-stroke").trim()||"#fff").attr("stroke-width", .7);
+  // day/night shading: vertical strips, opacity from solar elevation at inverted coords
+  const now = new Date(); let lastLon = -98;
+  const shade = svg.append("g");
+  for(let x=0; x<975; x+=15){
+    let ll = proj.invert ? (proj.invert([x+7.5,305]) || proj.invert([x+7.5,220]) || proj.invert([x+7.5,420])) : null;
+    const lon = ll ? ll[0] : lastLon; const lat = ll ? ll[1] : 39;
+    lastLon = lon;
+    const elev = sunElevation(lat, lon, now);
+    const op = Math.max(0, Math.min(0.5, -elev/12*0.5));
+    if(op>0.01) shade.append("rect").attr("x",x).attr("y",0).attr("width",15).attr("height",610).attr("fill","#0b1530").attr("opacity",op);
+  }
+  // markers
+  const groups = {}; const unplotted = [];
+  MEM.leads.filter(l=>!isDead(l)).forEach(l=>{
+    const c = leadCoord(l);
+    if(!c){ if(l.firm) unplotted.push(l.firm); return; }
+    const key = c.ll.join(",");
+    (groups[key] = groups[key] || {ll:c.ll, leads:[], approx:c.approx}).leads.push(l);
+  });
+  const tip = $("mapTip");
+  const mg = svg.append("g");
+  Object.values(groups).forEach(g=>{
+    const xy = proj(g.ll.slice().reverse()); if(!xy) return;
+    const anyAdded = g.leads.some(l=>l.status==="Added");
+    const anyVer = g.leads.some(l=>l.status==="Verified"||l.status==="Contacted");
+    const color = anyAdded ? (cs.getPropertyValue("--green").trim()||"#0e9f6e") : anyVer ? (cs.getPropertyValue("--blue").trim()||"#2563eb") : (cs.getPropertyValue("--amber").trim()||"#b07a14");
+    const r = Math.min(14, 5 + 2*Math.sqrt(g.leads.length-1));
+    mg.append("circle").attr("class","map-dot").attr("cx",xy[0]).attr("cy",xy[1]).attr("r",r)
+      .attr("fill",color).attr("fill-opacity",.85).attr("stroke","#fff").attr("stroke-width",1.5)
+      .on("mousemove",(ev)=>{
+        const wrap = $("mapWrap").getBoundingClientRect();
+        tip.style.display="block";
+        tip.style.left = Math.min(ev.clientX-wrap.left+14, wrap.width-250)+"px";
+        tip.style.top = (ev.clientY-wrap.top+10)+"px";
+        const city = g.leads[0].city || (STATE_NAMES[g.leads[0].state]||"")+(g.approx?" (state level)":"");
+        tip.innerHTML = "<b>"+esc(city)+"</b> · "+g.leads.length+" firm"+(g.leads.length>1?"s":"")+"<br>"+
+          g.leads.slice(0,4).map(l=>esc(l.firm)).join("<br>")+(g.leads.length>4?"<br>+"+(g.leads.length-4)+" more":"");
+      })
+      .on("mouseleave",()=>{ tip.style.display="none"; })
+      .on("click",()=>{ $("qSearch").value = g.leads[0].city || ""; $("qState").value = g.leads.length===1?g.leads[0].state:""; go("leads"); renderLeads(); });
+  });
+  const plotted = Object.values(groups).reduce((t,g)=>t+g.leads.length,0);
+  $("mapMeta").textContent = plotted+" firms plotted · shading & clocks update every minute";
+  $("mapUnplotted").textContent = unplotted.length ? "Not plotted (no city/state on file): "+[...new Set(unplotted)].slice(0,6).join(", ") : "";
+}
+
+/* ================= SEED DATA (Claude refreshes this block each research run) ================= */
+const SEED_LISTS = [{"id": "seed-ec1", "name": "East Coast batch 1 \u2014 Family/IP/Immigration", "created": "2026-06-11", "archived": false}]; /*SEEDL*/
+const SEED_LEADS = [{"firstName": "William", "lastName": "Stock", "title": "Managing Partner", "firm": "Klasko Immigration Law Partners", "website": "https://www.klaskolaw.com", "city": "Philadelphia", "state": "PA", "practiceArea": "Immigration Law", "firmSize": "20", "email": "wstock@klaskolaw.com", "phone": "215-825-8607", "lastVerified": "2026-06-11", "notes": "EMAIL PUBLISHED on firm team page (fetched 2026-06-11) + ICLG profile; founding partner, past AILA National President", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "Ronald", "lastName": "Klasko", "title": "Chairman & Founding Partner", "email": "rklasko@klaskolaw.com", "phone": "215-825-8608", "notes": "EMAIL PUBLISHED on firm team page + firm bio; past AILA National President; twice AILA Founders Award"}, {"firstName": "Timothy", "lastName": "D'Arduini", "title": "Partner-in-Charge of Washington DC Office", "email": "tdarduini@klaskolaw.com", "phone": "215-309-1300", "notes": "EMAIL PUBLISHED on firm team page + firm DC-office news release"}, {"firstName": "Elise", "lastName": "Fialkowski", "title": "Partner, Co-Chair Corporate Practice", "email": "efialkowski@klaskolaw.com", "phone": "215-825-8647", "notes": "EMAIL PUBLISHED on firm team page + Lexology Index 2026 rankings article"}, {"firstName": "Jessica", "lastName": "DeNisi", "title": "Partner, Co-Lead EB-5 Developers & Regional Centers Practice", "email": "jdenisi@klaskolaw.com", "phone": "202-970-3565", "notes": "EMAIL PUBLISHED on firm team page; based in NY office per firm bio"}]}, {"firstName": "Dustin", "lastName": "Baxter", "title": "Managing Partner", "firm": "Kuck Baxter", "website": "https://immigration.net", "city": "Atlanta", "state": "GA", "practiceArea": "Immigration Law", "firmSize": "12", "email": "dbaxter@immigration.net", "phone": "(404) 800-5538", "lastVerified": "2026-06-11", "notes": "Firm Our People page (fetched 2026-06-11) lists him as MP — many databases still show Charles Kuck as MP. Email PATTERN-DERIVED flast@immigration.net (ckuck@ confirmed via RocketReach); phone is office main", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "Charles", "lastName": "Kuck", "title": "Founding Partner", "email": "ckuck@immigration.net", "phone": "(404) 800-5538", "notes": "Firm Our People page (fetched, now Founding Partner not MP) + Avvo + past AILA Natl President. EMAIL CONFIRMED via RocketReach record; phone is office main"}, {"firstName": "Jorge", "lastName": "Gavilanes", "title": "Partner", "email": "jgavilanes@immigration.net", "phone": "(404) 800-5538", "notes": "Firm Our People page (fetched). Email PATTERN-DERIVED flast@immigration.net — verify before send; phone is office main"}]}, {"firstName": "Michael", "lastName": "Wildes", "title": "Managing Partner", "firm": "Wildes & Weinberg", "website": "https://www.wildeslaw.com", "city": "New York", "state": "NY", "practiceArea": "Immigration Law", "firmSize": "15", "email": "michael@wildeslaw.com", "lastVerified": "2026-06-11", "notes": "Firm site + extensive press. Email PATTERN-DERIVED first@wildeslaw.com (ContactOut: 100% of firm addresses use first@) — verify before send; firm size approximate", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Carmen", "lastName": "Arce", "title": "Founder & Managing Attorney", "firm": "Arce Immigration Law", "website": "https://arceglobal.com", "city": "Miami", "state": "FL", "practiceArea": "Immigration Law", "lastVerified": "2026-06-11", "notes": "Firm site (arceglobal.com) + FL Bar Board-Certified claim. NO EMAIL: no published address or reliable pattern found; use site contact form; firm likely <11 attorneys", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Anis", "lastName": "Saleh", "title": "Founder & Principal", "firm": "Saleh & Associates", "website": "https://salehlaw.com", "city": "Miami", "state": "FL", "practiceArea": "Immigration Law", "lastVerified": "2026-06-11", "notes": "Firm site (salehlaw.com) + FL Bar Board Certified + past AILA South FL president. NO EMAIL: no published address or pattern found; firm size likely small", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Bari Zell", "lastName": "Weinberger", "title": "Founder & Managing Partner", "firm": "Weinberger Divorce & Family Law Group", "website": "https://www.weinbergerlawgroup.com", "city": "Parsippany", "state": "NJ", "practiceArea": "Family Law", "firmSize": "26", "email": "bari@weinbergerlawgroup.com", "phone": "(973) 520-8822", "lastVerified": "2026-06-11", "notes": "Firm lawyers page (fetched 2026-06-11, MP confirmed) + PRNewswire + NJ Family Best Lawyers 2026. Email PATTERN-DERIVED first@weinbergerlawgroup.com (RocketReach/LeadIQ: first@ is dominant format, 56%) — verify before send", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Jacqueline", "lastName": "Newman", "title": "Managing Partner", "firm": "Berkman Bottger Newman & Schein", "website": "https://www.berkbot.com", "city": "New York", "state": "NY", "practiceArea": "Family Law", "firmSize": "30", "email": "jnewman@berkbot.com", "phone": "(212) 466-6015", "lastVerified": "2026-06-11", "notes": "Firm attorneys page (fetched 2026-06-11) lists Managing Partner. Email PATTERN-DERIVED flast@berkbot.com (jteufel@berkbot.com published example) — verify before send; phone office main", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "Barry", "lastName": "Berkman", "title": "Founding Partner", "email": "bberkman@berkbot.com", "phone": "(212) 466-6015", "notes": "Firm attorneys page (fetched). Email PATTERN-DERIVED flast@berkbot.com — verify before send"}, {"firstName": "Evan", "lastName": "Schein", "title": "Partner & Head of Litigation", "email": "eschein@berkbot.com", "phone": "(212) 466-6015", "notes": "Firm attorneys page (fetched). Email PATTERN-DERIVED flast@berkbot.com — verify before send"}]}, {"firstName": "Melissa", "lastName": "Needle", "title": "Founder & Managing Partner", "firm": "Needle | Cuda", "website": "https://www.needlecuda.com", "city": "Westport", "state": "CT", "practiceArea": "Family Law", "firmSize": "8", "lastVerified": "2026-06-11", "notes": "Firm bio page states MP, founded 2010, CT bar 1990. NO EMAIL: no published address or pattern found. Size ~8 — below 11, kept per widened threshold", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Thomas", "lastName": "Petrelli Jr.", "title": "Founding & Managing Partner", "firm": "Petrelli Previtera", "website": "https://www.petrellilaw.com", "city": "Philadelphia", "state": "PA", "practiceArea": "Family Law", "firmSize": "25", "email": "tpetrelli@petrellilaw.com", "lastVerified": "2026-06-11", "notes": "Firm site + Avvo 10/10. Email PATTERN-DERIVED flast@petrellilaw.com (RocketReach: 57.9% of firm addresses) — verify before send; multi-state offices", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Robert", "lastName": "Kates", "title": "Founding Partner", "firm": "Kates & Barlow", "website": "https://www.katesbarlow.com", "city": "Boston", "state": "MA", "practiceArea": "Family Law", "firmSize": "10", "lastVerified": "2026-06-11", "notes": "Firm site names founders. NO EMAIL: pattern not found. Size approx 10", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "Peter", "lastName": "Barlow", "title": "Founding Partner", "email": "", "phone": "", "notes": "Firm site names founders. NO EMAIL: pattern not found. Size approx 10"}]}, {"firstName": "E. John", "lastName": "Pagnanelli", "title": "Managing Partner", "firm": "Testa & Pagnanelli", "website": "https://www.tpfamilylaw.com", "city": "Norristown", "state": "PA", "practiceArea": "Family Law", "lastVerified": "2026-06-11", "notes": "Firm site states Managing Partner. NO EMAIL: pattern not found; firm size unconfirmed, likely <11", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Michael", "lastName": "Alber", "title": "Managing Partner", "firm": "The Alber Firm", "website": "https://alberlegal.com", "city": "New York", "state": "NY", "practiceArea": "Family Law", "lastVerified": "2026-06-11", "notes": "Firm site team page states Managing Partner; boutique matrimonial/criminal. NO EMAIL: pattern not found; size unconfirmed, likely <11", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "Peter", "lastName": "Lando", "title": "Founding Partner", "firm": "Lando & Anastasi", "website": "https://www.lalaw.com", "city": "Boston", "state": "MA", "practiceArea": "Intellectual Property", "firmSize": "25", "email": "plando@lalaw.com", "phone": "617.395.7000", "lastVerified": "2026-06-11", "notes": "Firm people page (fetched 2026-06-11). Email PATTERN-DERIVED FLast@LALaw.com (JTallman@LALaw.com published on firm site) — verify before send; phone office main", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "John", "lastName": "Anastasi", "title": "Founding Partner", "email": "janastasi@lalaw.com", "phone": "617.395.7000", "notes": "Firm people page (fetched). Email PATTERN-DERIVED FLast@LALaw.com per published firm example — verify before send"}]}, {"firstName": "John", "lastName": "Rabena", "title": "Managing Partner", "firm": "Sughrue Mion", "website": "https://www.sughrue.com", "city": "Washington", "state": "DC", "practiceArea": "Intellectual Property", "firmSize": "60", "lastVerified": "2026-06-11", "notes": "Firm site + 2026 DC Super Lawyers names him MP. NO EMAIL: format not found in sources reviewed. CAUTION: ~50-100 attorneys, may exceed mid-size ceiling", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "John", "lastName": "Harrity", "title": "Co-Managing Partner", "firm": "Harrity & Harrity", "website": "https://harrityllp.com", "city": "Fairfax", "state": "VA", "practiceArea": "Intellectual Property", "firmSize": "40", "email": "jharrity@harrityllp.com", "lastVerified": "2026-06-11", "notes": "Firm team page + Vault (~40 attorneys). Email PATTERN-DERIVED flast@harrityllp.com (AeroLeads: flast@ is firm format) — verify before send; co-manages with Paul Harrity", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "Paul", "lastName": "Harrity", "title": "Co-Managing Partner", "email": "pharrity@harrityllp.com", "phone": "", "notes": "Vault + firm team page. Email PATTERN-DERIVED flast@harrityllp.com — verify before send"}]}, {"firstName": "Greg", "lastName": "Carlin", "title": "Founding Principal", "firm": "Meunier Carlin & Curfman", "website": "https://www.mcciplaw.com", "city": "Atlanta", "state": "GA", "practiceArea": "Intellectual Property", "firmSize": "23", "email": "gcarlin@mcciplaw.com", "lastVerified": "2026-06-11", "notes": "Firm About Us page (fetched 2026-06-11, quoted as Principal); 23 lawyers per US News. Email PATTERN-DERIVED flast@mcciplaw.com (RocketReach: 100% of firm addresses) — verify before send", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": [{"firstName": "Andrew", "lastName": "Meunier", "title": "Founding Principal", "email": "ameunier@mcciplaw.com", "phone": "", "notes": "Firm launch news on firm site; goes by Drew. Email PATTERN-DERIVED flast@mcciplaw.com — verify before send; Law360 2021 reported new MP appointment, confirm current MP title"}]}, {"firstName": "Jay", "lastName": "Halt", "title": "President", "firm": "Volpe Koenig", "website": "https://www.vklaw.com", "city": "Philadelphia", "state": "PA", "practiceArea": "Intellectual Property", "firmSize": "35", "email": "jhalt@vklaw.com", "lastVerified": "2026-06-11", "notes": "Firm news page names him President — UNCERTAIN: article date unconfirmed, verify still President. Email PATTERN-DERIVED flast@vklaw.com (RocketReach: 72%) — verify before send", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}, {"firstName": "David", "lastName": "Chavous", "title": "Founder & Managing Partner", "firm": "Chavous Intellectual Property Law", "website": "https://www.chavousiplaw.com", "city": "Boston", "state": "MA", "practiceArea": "Intellectual Property", "lastVerified": "2026-06-11", "notes": "Firm site states MP, pharma/biotech IP litigation. NO EMAIL: pattern not found; firm size likely <11", "status": "Researching", "checks": {"firmBio": "pass"}, "listId": "seed-ec1", "altContacts": []}]; /*SEED*/
+function mergeSeedsRun(){
+  SEED_LISTS.forEach(s=>{ if(!MEM.lists.find(x=>x.id===s.id)) MEM.lists.push(s); });
+  let added = 0;
+  SEED_LEADS.forEach(s=>{
+    const key = (s.firstName+"|"+s.lastName+"|"+(s.firm||"")).toLowerCase();
+    const exists = MEM.leads.some(l=>(l.firstName+"|"+l.lastName+"|"+(l.firm||"")).toLowerCase()===key)
+      || MEM.leads.some(l=>(l.altContacts||[]).some(a=>((a.firstName+"|"+a.lastName).toLowerCase()===(s.firstName+"|"+s.lastName).toLowerCase()) && firmKey(l.firm)===firmKey(s.firm)));
+    if(!exists){ MEM.leads.push(Object.assign(blankLead(), s, {id:uid(), source:"claude-research"})); added++; }
+  });
+  if(added) store();
+  const consolidated = dedupeByFirm();
+  if(added || consolidated){
+    setTimeout(()=>toast((added?added+" researched leads loaded":"")+(added&&consolidated?" · ":"")+(consolidated?consolidated+" same-firm contacts filed as backups":"")), 500);
+  }
+}
+
+/* ================= INIT ================= */
+applyTheme((function(){ try{ return localStorage.getItem("leadforge_theme")||"light"; }catch(e){ return "light"; } })());
+mergeSeedsRun(); renderAcct(); renderViews(); renderDirectory(); renderLeads(); renderDash();
+</script>
+</body>
+</html>
